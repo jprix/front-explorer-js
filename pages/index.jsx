@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import MeshModal from '../components/MeshModal';
 import Grid from '@mui/material/Grid';
@@ -6,15 +6,18 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TransferDashboard from '../components/TransfersDashboard';
-import Cookies from 'js-cookie';
-import cookie from 'cookie';
 
 
 const HomePage = (props) => {
   const [openMeshModal, setOpenMeshModal] = useState(false);
   const [catalogLink, setCatalogLink] = useState('');
   
-const [existingAuthData, setExistingAuthData] = useState(props.existingAuthData);
+  const [existingAuthData, setExistingAuthData] = useState([]);
+
+  useEffect(() => {
+    const authData = localStorage.getItem('authData');
+    setExistingAuthData(authData ? JSON.parse(authData) : []);
+  }, []);
 
 
   const getCatalogLink = async () => {
@@ -38,12 +41,18 @@ const [existingAuthData, setExistingAuthData] = useState(props.existingAuthData)
     const updatedAuthData = [...existingAuthData, newAuthData];
     setExistingAuthData(updatedAuthData);
   
-    // Set the updated authData array to the cookie
+    // Set the updated authData array to localStorage
     const maxExpiresInSeconds = Math.max(...updatedAuthData.map(obj => obj.accessToken.expiresInSeconds));
     const inOneHour = new Date(new Date().getTime() + maxExpiresInSeconds * 1000);
-  
-    Cookies.set('authData', JSON.stringify(updatedAuthData), { expires: inOneHour });
+    console.log('authData before setting localStorage:', localStorage.getItem('authData'));
+
+    localStorage.setItem('authData', JSON.stringify(updatedAuthData));
+
+    console.log('authData after setting localStorage:', localStorage.getItem('authData'));
+    console.log('updatedAuthData size:', new TextEncoder().encode(JSON.stringify(updatedAuthData)).length);
+
   };
+
   
   
 
@@ -52,7 +61,6 @@ const [existingAuthData, setExistingAuthData] = useState(props.existingAuthData)
     // Handle the broker connection closed event
   };
 
-  console.log('this is the authData', Cookies.get('authData'))
 
   return (
     <div>
@@ -80,32 +88,41 @@ const [existingAuthData, setExistingAuthData] = useState(props.existingAuthData)
   <Grid container spacing={3}>
     {existingAuthData?.map((data, index) => (
       <Grid item xs={12} key={index}>
-        <Card>
-          <CardContent>
-            <Typography variant="h5" component="div">
-              Broker: {data?.accessToken?.brokerName}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Broker Type: {data?.accessToken?.brokerType}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Expires In: {data?.accessToken?.expiresInSeconds} seconds
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Account Name: {data?.accessToken?.accountTokens[0].account.accountName}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Fund: {data?.accessToken?.accountTokens[0]?.account?.fund}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Cash: {data?.accessToken?.accountTokens[0]?.account?.cash}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+      <Card>
+        <CardContent>
+          <Typography variant="h6" component="div">
+            Connected Broker: {data?.accessToken?.brokerName}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Broker Type: {data?.accessToken?.brokerType}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Expires In: {data?.accessToken?.expiresInSeconds} seconds
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Account Name: {data?.accessToken?.accountTokens[0].account.accountName}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Fund: {data?.accessToken?.accountTokens[0]?.account?.fund}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Cash: {data?.accessToken?.accountTokens[0]?.account?.cash}
+          </Typography>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+          <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px' }}>
+            Deposit
+          </Button>
+          <Button variant="contained" color="secondary" size="small">
+            Disconnect
+          </Button>
+      </div>
+        </CardContent>
+      </Card>
+    </Grid>
+    
         ))}
          <Grid item xs={12}>
-      <TransferDashboard />
+      {/* <TransferDashboard /> */}
     </Grid>
         </Grid>
       )}
@@ -116,8 +133,3 @@ const [existingAuthData, setExistingAuthData] = useState(props.existingAuthData)
 export default HomePage;
 
 
-export async function getServerSideProps(context) {
-  const cookies = cookie.parse(context.req.headers.cookie ?? '');
-  const existingAuthData = cookies.authData ? JSON.parse(cookies.authData) : [];
-  return { props: { existingAuthData } };
-}
