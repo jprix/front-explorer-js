@@ -6,6 +6,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TransferDashboard from '../components/TransfersDashboard';
+import NetworkDashboard from 'components/NetworksDashboard';
 
 
 const HomePage = (props) => {
@@ -13,7 +14,8 @@ const HomePage = (props) => {
   const [catalogLink, setCatalogLink] = useState('');
   
   const [existingAuthData, setExistingAuthData] = useState([]);
-
+  const networks = fetch('/api/networks');
+  console.log(networks)
   useEffect(() => {
     const authData = localStorage.getItem('authData');
     setExistingAuthData(authData ? JSON.parse(authData) : []);
@@ -23,7 +25,6 @@ const HomePage = (props) => {
   const getCatalogLink = async () => {
     const link = await fetch('/api/catalog');
     const response = await link.json();
-    console.log('this is the response from the api', response);
     if (response) {
       setCatalogLink(response.content.iFrameUrl);
       console.log('index catalog link', catalogLink, response.content.iFrameUrl)
@@ -44,17 +45,11 @@ const HomePage = (props) => {
     // Set the updated authData array to localStorage
     const maxExpiresInSeconds = Math.max(...updatedAuthData.map(obj => obj.accessToken.expiresInSeconds));
     const inOneHour = new Date(new Date().getTime() + maxExpiresInSeconds * 1000);
-    console.log('authData before setting localStorage:', localStorage.getItem('authData'));
-
+    
     localStorage.setItem('authData', JSON.stringify(updatedAuthData));
-
-    console.log('authData after setting localStorage:', localStorage.getItem('authData'));
-    console.log('updatedAuthData size:', new TextEncoder().encode(JSON.stringify(updatedAuthData)).length);
 
   };
 
-  
-  
 
   const handleExit = (error) => {
     console.log('Broker connection closed:', error);
@@ -123,6 +118,7 @@ const HomePage = (props) => {
         ))}
          <Grid item xs={12}>
       {/* <TransferDashboard /> */}
+      <NetworkDashboard  />
     </Grid>
         </Grid>
       )}
