@@ -14,6 +14,7 @@ const HomePage = (props) => {
   const [openMeshModal, setOpenMeshModal] = useState(false);
   const [catalogLink, setCatalogLink] = useState('');
   const [openTransferModal, setOpenTransferModal] = useState(false);
+  const [depositAuthData, setDepositAuthData] = useState({});
 
   
   const [existingAuthData, setExistingAuthData] = useState([]);
@@ -23,9 +24,16 @@ const HomePage = (props) => {
     setExistingAuthData(authData ? JSON.parse(authData) : []);
   }, []);
 
+  
+
   useEffect(() => {
     localStorage.setItem('authData', JSON.stringify(existingAuthData));
   }, [existingAuthData]);
+  
+  useEffect(() => {
+    console.log('Deposit auth data updated:', depositAuthData);
+  }, [depositAuthData]);
+  
   
 
   const getCatalogLink = async (enableTransfers) => {
@@ -94,8 +102,9 @@ const HomePage = (props) => {
     }
 };
 
-  const handleDeposit = async (authData) => {
-    console.log('depositing', authData, catalogLink);   
+  const handleDeposit = async (brokerAuth) => {
+    console.log('depositing', brokerAuth);   
+    setDepositAuthData(brokerAuth);
    setOpenTransferModal(true);
   };
  
@@ -148,7 +157,10 @@ const HomePage = (props) => {
           </Typography>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
           <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px' }} onClick={() => handleDeposit(data)}>
-            Deposit
+            Send
+          </Button>
+          <Button variant="contained" color="tertiary" size="small" style={{ marginRight: '10px', color: 'white' }} onClick={() => handleReceive(data)}>
+            Receive
           </Button>
           <Button variant="contained" color="secondary" size="small" onClick=   {() => handleDisconnect(data)}>
              Disconnect
@@ -170,6 +182,7 @@ const HomePage = (props) => {
       <TransferModal
         open={openTransferModal}
         onClose={() => setOpenTransferModal(false)}
+        brokerAuthData={depositAuthData}
       />
     )}
     </div>

@@ -23,6 +23,9 @@ export default async function handler(req, res) {
         }
       );
       if (!disconnectAccount.ok) {
+        const responseBody = await disconnectAccount.json();
+        const errorMessage = `Failed to retrieve or generate a deposit address. Status: ${disconnectAccount.status} - ${disconnectAccount.statusText}. Message: ${responseBody.message}`;
+
         throw new Error(
           `Failed to Disconnect account: ${disconnectAccount.statusText}`
         );
