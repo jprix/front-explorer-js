@@ -7,23 +7,29 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TransferDashboard from '../components/TransfersDashboard';
 import NetworkDashboard from 'components/NetworksDashboard';
+import TransferModal from 'components/transferModal';
 
 
 const HomePage = (props) => {
   const [openMeshModal, setOpenMeshModal] = useState(false);
   const [catalogLink, setCatalogLink] = useState('');
+  const [openTransferModal, setOpenTransferModal] = useState(false);
+
   
   const [existingAuthData, setExistingAuthData] = useState([]);
-  const networks = fetch('/api/networks');
-  console.log(networks)
+
   useEffect(() => {
     const authData = localStorage.getItem('authData');
     setExistingAuthData(authData ? JSON.parse(authData) : []);
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem('authData', JSON.stringify(existingAuthData));
+  }, [existingAuthData]);
+  
 
-  const getCatalogLink = async () => {
-    const link = await fetch('/api/catalog');
+  const getCatalogLink = async (enableTransfers) => {
+    const link = await fetch(`/api/catalog?enableTransfer=${enableTransfers}`);
     const response = await link.json();
     if (response) {
       setCatalogLink(response.content.iFrameUrl);
@@ -56,6 +62,43 @@ const HomePage = (props) => {
     // Handle the broker connection closed event
   };
 
+  const handleDisconnect = async (authData) => {
+    console.log('disconnecting', authData);
+    const payload = {
+      type: authData.accessToken.brokerType,
+      authToken: authData.accessToken.accountTokens[0].accessToken,
+    }
+
+    try {
+      const disconnect = await fetch('/api/disconnect', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!disconnect.ok) {
+        throw new Error(
+          `Failed to Disconnect account: ${disconnect.statusText}`
+        );
+      }
+
+      // Remove disconnected authData from existingAuthData state and localStorage
+      const updatedAuthData = existingAuthData.filter(data => data !== authData);
+      setExistingAuthData(updatedAuthData);
+      localStorage.setItem('authData', JSON.stringify(updatedAuthData));
+
+    } catch (error) {
+      console.log('this was the error from Mesh', error);
+    }
+};
+
+  const handleDeposit = async (authData) => {
+    console.log('depositing', authData, catalogLink);   
+   setOpenTransferModal(true);
+  };
+ 
 
   return (
     <div>
@@ -104,12 +147,13 @@ const HomePage = (props) => {
             Cash: {data?.accessToken?.accountTokens[0]?.account?.cash}
           </Typography>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-          <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px' }}>
+          <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px' }} onClick={() => handleDeposit(data)}>
             Deposit
           </Button>
-          <Button variant="contained" color="secondary" size="small">
-            Disconnect
+          <Button variant="contained" color="secondary" size="small" onClick=   {() => handleDisconnect(data)}>
+             Disconnect
           </Button>
+
       </div>
         </CardContent>
       </Card>
@@ -122,6 +166,12 @@ const HomePage = (props) => {
     </Grid>
         </Grid>
       )}
+      {openTransferModal && (
+      <TransferModal
+        open={openTransferModal}
+        onClose={() => setOpenTransferModal(false)}
+      />
+    )}
     </div>
   );
 };
