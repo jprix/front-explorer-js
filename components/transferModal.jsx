@@ -4,28 +4,40 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material/styles';
 import ConfigurePreviewForm from './ConfigurePreview';
 
-const Step1 = ({ onNext, onStepChange, brokerAuthData, setDepositAddress }) => {
-    const [validAddress, setValidAddress] = useState(false);
+const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddress }) => {
+    const [validAddress, setValidAddress] = useState(false);   
     const [symbol, setSymbol] = useState('ETH');
     const [chain, setChain] = useState('ethereum');
-    const [type, setType] = useState(brokerAuthData?.accessToken?.brokerType);
-    const [loading, setLoading] = useState(false); // New state for loading
+    const [loading, setLoading] = useState(false);
+    const [destinationDetails, setDestinationDetails] = useState(null);
 
-  console.log('brokerAuthData', brokerAuthData)
-  
-   
-  
+    useEffect(() => {
+        if (existingAuthData.length > 1) {
+            const toAuthData = existingAuthData.find(
+                (authData) => authData.accessToken.brokerType !== brokerAuthData.accessToken.brokerType
+            );
+            if (toAuthData) {
+                setDestinationDetails(toAuthData);
+                console.log('toAuthData', toAuthData);
+            } else {
+                console.log('No matching object found.');
+            }
+        } else {
+            console.log('only one object');
+        }
+    }, [existingAuthData, brokerAuthData]);
+
     const handleSubmit = async (e) => {
-      e.preventDefault();
-      console.log('submitting form');
+        e.preventDefault();
+        console.log('submitting form');
     };
 
     const handleGetDepositAddress = async () => {
         setLoading(true); // Set loading to true before making the request
     
         const payload = {
-          authToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
-          type,
+          authToken: destinationDetails?.accessToken?.accountTokens[0]?.accessToken,
+          type: destinationDetails?.accessToken?.brokerType,
           symbol,
           chain,
         };
@@ -61,7 +73,7 @@ const Step1 = ({ onNext, onStepChange, brokerAuthData, setDepositAddress }) => {
   
     return (
       <div>
-        <h2>Get Deposit Address from: {brokerAuthData?.accessToken?.brokerName}</h2>
+        <h2>Get Deposit Address</h2>
        
           <Card
             sx={{
@@ -75,17 +87,15 @@ const Step1 = ({ onNext, onStepChange, brokerAuthData, setDepositAddress }) => {
             <CardContent sx={{ flexGrow: 1 }}>
   
               <form onSubmit={handleSubmit}>
-                <FormControl fullWidth>
-                  <Typography variant="h6">Type</Typography>
-                    
-                  <TextField
-                    required
-                    id="type"
-                    value={brokerAuthData?.accessToken?.brokerType}
-                    placeholder={brokerAuthData?.accessToken?.brokerType}
-                    onChange={(e) => setType(e.target.value)}
-                  />
-                </FormControl>
+              <FormControl fullWidth>
+                            <Typography variant="h6">Destination</Typography>
+                            <TextField
+                                required
+                                id="destination"
+                                value={destinationDetails?.accessToken?.brokerType || ''}
+                                disabled
+                            />
+                        </FormControl>
                 <FormControl fullWidth>
                   <Typography variant="h6">Symbol</Typography>
                   <Select
@@ -176,7 +186,7 @@ const Step1 = ({ onNext, onStepChange, brokerAuthData, setDepositAddress }) => {
   );
   
 
-  const TransferModal = ({ open, onClose, brokerAuthData }) => {
+  const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
     const theme = useTheme();
     const [activeStep, setActiveStep] = useState(1);
     const [depositAddress, setDepositAddress] = useState({});
@@ -200,6 +210,7 @@ const Step1 = ({ onNext, onStepChange, brokerAuthData, setDepositAddress }) => {
   {activeStep === 1 && (
     <Step1
       brokerAuthData={brokerAuthData}
+      existingAuthData={existingAuthData}
       onStepChange={() => handleStepChange(2)}
       setDepositAddress={setDepositAddress} 
     />

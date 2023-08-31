@@ -157,10 +157,10 @@ const HomePage = (props) => {
           </Typography>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
           <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px' }} onClick={() => handleDeposit(data)}>
-            Send
+            Send / Withdraw
           </Button>
           <Button variant="contained" color="tertiary" size="small" style={{ marginRight: '10px', color: 'white' }} onClick={() => handleReceive(data)}>
-            Receive
+            Receive / Deposit
           </Button>
           <Button variant="contained" color="secondary" size="small" onClick=   {() => handleDisconnect(data)}>
              Disconnect
@@ -183,6 +183,7 @@ const HomePage = (props) => {
         open={openTransferModal}
         onClose={() => setOpenTransferModal(false)}
         brokerAuthData={depositAuthData}
+        existingAuthData={existingAuthData}
       />
     )}
     </div>
