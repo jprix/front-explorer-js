@@ -42,7 +42,7 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
             {!loading ? (
               <ConfigurePreviewForm brokerAuthData={brokerAuthData} depositAddress={depositAddress} toAuthData={toAuthData} onStepChange={onStepChange} setTransferDetails={setTransferDetails} handleExecutePreview={handleExecutePreview} formValues={formValues}/>
             ) : (
-              <div>Loading deposit address...</div>
+              <div>Loading preview details...</div>
             )}
       
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, gap: 2 }}>
@@ -277,6 +277,7 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
       setDepositAddress={setDepositAddress}
       handleGetDepositAddress={handleGetDepositAddress} 
       setToAuthData={setToAuthData}
+      loading={loading}
       toAuthData={toAuthData}
       symbol={symbol}
         setSymbol={setSymbol}
@@ -294,6 +295,7 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
     handleExecutePreview={handleExecutePreview}
     formValues={formValues}
     handleInputChange={handleInputChange}
+    loading={loading}
  />
  
   )}
@@ -305,6 +307,7 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
       transferDetails={transferDetails}
       handleExecuteTransfer={handleExecuteTransfer}
       formValues={formValues}
+      loading={loading}
 
       
     />
