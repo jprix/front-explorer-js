@@ -1,45 +1,20 @@
 import React, { useState } from 'react';
 import { Card, CardContent, FormControl, MenuItem, TextField, Typography, Select, Button, CircularProgress } from '@mui/material';
+import { useTheme } from '@mui/system';
 
-const ConfigurePreviewForm = ({brokerAuthData, depositAddress}) => {
-  const [loading, setLoading] = useState(false);
-  console.log('brokerAuthData', brokerAuthData, 'depositAddress', depositAddress)
-  const [formValues, setFormValues] = useState({
-    fromAuthToken: brokerAuthData?.address,
-    fromType: brokerAuthData?.accessToken?.brokerType,
-    fromNetworkId: brokerAuthData?.address,
-    toAuthToken: depositAddress?.address,
-    toType: "robinhood",
-    toAddresses:{
-        networkId: depositAddress?.networkId,
-        symbol: 'eth',
-        address: depositAddress?.address,
-    symbol: 'eth',
-    amount: 0.0,
-    amountInFiat: 1.0,
-    
-    }
-    
-  });
 
-  const handleInputChange = (field, value) => {
-    setFormValues(prevValues => ({
-      ...prevValues,
-      [field]: value,
-    }));
-  };
+const ConfigurePreviewForm = ({brokerAuthData, formValues, depositAddress, onStepChange, setTransferDetails, handleInputChange }) => {
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('submitting formPreview');
-  };
+  console.log('formValues', formValues)
+  const theme = useTheme();
 
   return (
     <Card>
     <CardContent>
-      <form onSubmit={handleSubmit}>
+      <form >
       <FormControl fullWidth sx={{ mb: 2 }}>
-        <Typography variant="h6" sx={{ mb: 1 }}>Sending From: {brokerAuthData?.accessToken?.brokerType}</Typography>
+        <Typography variant="h5" sx={{ mb: 1, color: theme.palette.secondary.main }}>
+            Sending From: {brokerAuthData?.accessToken?.brokerType}</Typography>
           <TextField
             required
             label="From Auth Token"
@@ -56,15 +31,11 @@ const ConfigurePreviewForm = ({brokerAuthData, depositAddress}) => {
             onChange={(e) => handleInputChange('fromType', e.target.value)}
           />
         </FormControl>
-  
+        
+        
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <TextField
-            label="To Auth Token"
-            value={formValues?.toAuthToken || ''}
-            onChange={(e) => handleInputChange('toAuthToken', e.target.value)}
-          />
+          <Typography variant="h5" sx={{ mb: 1, color: theme.palette.secondary.main }}> To your {formValues?.toType} account. </Typography>
         </FormControl>
-  
         <FormControl fullWidth sx={{ mb: 2 }}>
           <TextField
             label="To Type"
@@ -72,36 +43,42 @@ const ConfigurePreviewForm = ({brokerAuthData, depositAddress}) => {
             onChange={(e) => handleInputChange('toType', e.target.value)}
           />
         </FormControl>
-  
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <TextField
+            label="Destination Address"
+            disabled
+            value={depositAddress?.address || ''}
+            onChange={(e) => handleInputChange('toAddress', e.target.value)}
+          />
+        </FormControl>
         <FormControl fullWidth sx={{ mb: 2 }}>
           <TextField
             label="Network ID"
-            value={formValues.networkId}
+            disabled
+            value={depositAddress?.networkId || ''}
             onChange={(e) => handleInputChange('networkId', e.target.value)}
           />
         </FormControl>
         <FormControl fullWidth sx={{ mb: 2 }}>
+        <Typography variant="h6" sx={{ mb: 1 }}>Transfer Details: </Typography>
           <TextField
-            label="Originating Address"
-            value={formValues?.networkAddress || ''}
-            onChange={(e) => handleInputChange('networkAddress', e.target.value)}
+            required
+            label="Amount"
+            value={formValues.amount}
+            onChange={(e) => handleInputChange('amount', e.target.value)}
           />
         </FormControl>
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <Typography variant="h5">Sending To: {formValues?.toType} </Typography>
-          {/* Other fields can be added similarly */}
-        </FormControl>
-       
   
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={loading}
-          sx={{ mt: 2 }}
-        >
-          {loading ? <CircularProgress size={24} /> : 'Submit'}
-        </Button>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <TextField
+            required
+            label="Fiat Currency"
+            value={formValues.fiatCurrency}
+            onChange={(e) => handleInputChange('fiatCurrency', e.target.value)}
+          />
+        </FormControl>
+  
+       
       </form>
     </CardContent>
   </Card>
