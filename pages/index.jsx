@@ -156,15 +156,36 @@ const HomePage = (props) => {
             Cash: {data?.accessToken?.accountTokens[0]?.account?.cash}
           </Typography>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-          <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px' }} onClick={() => handleDeposit(data)}>
+
+          <Button 
+            variant="contained" 
+            color="primary" 
+            size="small" 
+            style={{ marginRight: '10px' }} 
+            onClick={() => handleDeposit(data)}
+            disabled={existingAuthData.length < 2}
+          >
             Send / Withdraw
           </Button>
-          <Button variant="contained" color="tertiary" size="small" style={{ marginRight: '10px', color: 'white' }} onClick={() => handleReceive(data)}>
+          <Button 
+            variant="contained" 
+            color="tertiary" 
+            size="small" 
+            style={{ marginRight: '10px', color: 'white' }} 
+            onClick={() => handleReceive(data)}
+            disabled={existingAuthData.length < 2}
+          >
             Receive / Deposit
           </Button>
-          <Button variant="contained" color="secondary" size="small" onClick=   {() => handleDisconnect(data)}>
-             Disconnect
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            size="small" 
+            onClick={() => handleDisconnect(data)}
+          >
+            Disconnect
           </Button>
+
 
       </div>
         </CardContent>
