@@ -100,7 +100,7 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
         networkId: depositAddress?.networkId,
         symbol: 'eth',
         toAddress: depositAddress?.address,
-        amount: 0.01,
+        amount: 0.0001,
         fiatCurrency: 'USD',
         }
         
@@ -223,7 +223,7 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
         const payload = {
             fromAuthToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
             fromType: brokerAuthData?.accessToken?.brokerType,
-            previewId: transferDetails?.previewResult.previewId,
+            previewId: transferDetails?.previewResult?.previewId,
             };
     
         try {

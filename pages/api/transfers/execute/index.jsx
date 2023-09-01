@@ -31,7 +31,7 @@ export default async function handler(req, res) {
           `Failed to Execute transfer: ${errorMessage}`
         );
       }
-      const response = await executePreview.json();
+      const response = await executeTransfer.json();
       return res.status(200).json(response);
     } catch (error) {
       console.log('this was the error from Mesh', error);
