@@ -150,7 +150,7 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
         console.log('step 2 depositAddress', depositAddress); // Moved outside of the return
         return (
           <div>
-            <h2>Preview Transfer</h2>
+            <h2>Configure Transfer</h2>
             {depositAddress ? (
               <ConfigurePreviewForm brokerAuthData={brokerAuthData} depositAddress={depositAddress} />
             ) : (
