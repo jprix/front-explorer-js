@@ -10,7 +10,7 @@ import NetworkDashboard from 'components/NetworksDashboard';
 import TransferModal from 'components/transferModal';
 import PortfolioHoldings from 'components/PortfolioHoldings';
 
-const HomePage = (props) => {
+const HomePage = () => {
   const [openMeshModal, setOpenMeshModal] = useState(false);
   const [catalogLink, setCatalogLink] = useState('');
   const [openTransferModal, setOpenTransferModal] = useState(false);
@@ -51,11 +51,9 @@ const HomePage = (props) => {
 
   const handleSuccess = (newAuthData) => {
     console.log('Broker connected successfully:', newAuthData);
-    // Combine existing authData array with the new authData object
     const updatedAuthData = [...existingAuthData, newAuthData];
     setExistingAuthData(updatedAuthData);
 
-    // Set the updated authData array to localStorage
     const maxExpiresInSeconds = Math.max(
       ...updatedAuthData.map((obj) => obj.accessToken.expiresInSeconds)
     );
@@ -120,11 +118,11 @@ const HomePage = (props) => {
         <Button variant="contained" color="primary" onClick={getCatalogLink}>
           Connect to Mesh
         </Button>
-      ) : (
+      ) : existingAuthData.length <= 1 ? (
         <Button variant="contained" color="primary" onClick={getCatalogLink}>
           Link Another Account
         </Button>
-      )}
+      ) : null}
 
       {openMeshModal && (
         <MeshModal

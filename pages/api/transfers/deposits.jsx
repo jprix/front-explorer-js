@@ -5,7 +5,9 @@ export default async function handler(req, res) {
   const payload = req.body;
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed. Please use POST method.' });
+    return res
+      .status(405)
+      .json({ error: 'Method not allowed. Please use POST method.' });
   }
 
   try {
@@ -30,6 +32,8 @@ export default async function handler(req, res) {
     return res.status(200).json(response);
   } catch (error) {
     console.error('Error from Mesh:', error);
-    res.status(500).json({ error: `An internal server error occurred: ${error.message}` });
+    res
+      .status(500)
+      .json({ error: `An internal server error occurred: ${error.message}` });
   }
 }
