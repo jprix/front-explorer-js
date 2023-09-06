@@ -32,7 +32,7 @@ const HomePage = () => {
   }, [depositAuthData]);
 
   const getCatalogLink = async () => {
-    const link = await fetch(`/api/catalog?EnableTransfers=false`, {
+    const link = await fetch(`/api/catalog?&EnableTransfers=false`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

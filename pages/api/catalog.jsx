@@ -2,6 +2,7 @@ export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
   const { EnableTransfers, UserId, CallbackUrl } = req.query;
 
+  console.log('CallbackUrl', CallbackUrl);
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -25,6 +26,7 @@ export default async function handler(req, res) {
     queryString += `&CallbackUrl=${CallbackUrl}`;
   }
 
+  console.log('updated query', queryString);
   try {
     const getCatalogLink = await fetch(queryString, options);
 
