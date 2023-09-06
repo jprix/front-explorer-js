@@ -7,25 +7,25 @@ export default async function handler(req, res) {
       .json({ error: 'Method not allowed. Please use POST method.' });
   }
 
-  const { UserId } = req.query;
+  //const { UserId } = req.query;
 
-  // const payload = {
-  //   UserId,
-  // };
+  const payload = {
+    authToken:
+      'dyHFM7zQVKg/H+ArTqbzKA==.xTf5s0tJuEl7U4cAsrtWa/dRwN0XKoC06KBUgsRO2le+fmb1wgSNM9iGFdcPf5Zc86Ht/PP+HOW2Jcruu10SXs9ztuLn5dBuvx4bOvxf8vHah2CkEieD04rBu7zAcNzR4X8Fpj52Yy5/1YL1r0i2QcCIYJCO5j8FcuzQCK5mfWiwsxakmBGRjW6P88cFaQyxBUi4ZKewwxiWN+1/7HSbzCBzS9bscTBAUSFbkBm7DfNUC2te4GbZIyBef6rXaWeK',
+    type: 'coinbase',
+  };
 
-  console.log(req.method, req.body);
+  console.log(payload);
   try {
-    const response = await fetch(
-      `${MESH_API_URL}/api/v1/holdings/portfolio?UserId=${UserId}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Client-Id': CLIENT_ID,
-          'X-Client-Secret': PROD_API_KEY,
-        },
-        method: 'GET',
-      }
-    );
+    const response = await fetch(`${MESH_API_URL}/api/v1/holdings/get`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Client-Id': CLIENT_ID,
+        'X-Client-Secret': PROD_API_KEY,
+      },
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
     console.log('response from mesh', response.status);
     if (!response.ok) {
       const responseBody = await response.json();

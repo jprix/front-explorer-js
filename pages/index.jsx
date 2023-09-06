@@ -31,16 +31,17 @@ const HomePage = () => {
     console.log('Deposit auth data updated:', depositAuthData);
   }, [depositAuthData]);
 
-  const getCatalogLink = async (enableTransfers) => {
-    const link = await fetch(`/api/catalog?enableTransfer=${enableTransfers}`);
+  const getCatalogLink = async () => {
+    const link = await fetch(`/api/catalog?EnableTransfers=false`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
     const response = await link.json();
     if (response) {
       setCatalogLink(response.content.iFrameUrl);
-      console.log(
-        'index catalog link',
-        catalogLink,
-        response.content.iFrameUrl
-      );
       setOpenMeshModal(true);
     }
   };
