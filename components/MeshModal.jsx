@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
+import PropTypes from 'prop-types';
 
 import { createFrontConnection } from '@front-finance/link';
 
@@ -11,7 +12,7 @@ const MeshModal = ({ open, onClose, link, onSuccess, onExit }) => {
     setFrontConnection(
       createFrontConnection({
         clientId: CLIENT_ID,
-        onBrokerConnected: authData => {
+        onBrokerConnected: (authData) => {
           console.info('FRONT SUCCESS', authData);
           onSuccess(authData);
         },
@@ -41,14 +42,16 @@ const MeshModal = ({ open, onClose, link, onSuccess, onExit }) => {
   }, [frontConnection, open, link]);
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-    >
-    </Dialog>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth></Dialog>
   );
+};
+
+MeshModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  link: PropTypes.string.isRequired,
+  onSuccess: PropTypes.func.isRequired,
+  onExit: PropTypes.func,
 };
 
 export default MeshModal;
