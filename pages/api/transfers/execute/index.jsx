@@ -4,6 +4,7 @@ export default async function handler(req, res) {
     const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;  
   
     const payload = req.body;
+    
   
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });

@@ -100,7 +100,7 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
         networkId: depositAddress?.networkId,
         symbol: 'eth',
         toAddress: depositAddress?.address,
-        amount: 0.0001,
+        amount: 0.001,
         fiatCurrency: 'USD',
         }
         
@@ -217,13 +217,15 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
     }
 
       const handleExecuteTransfer = async () => {
-        setLoading(true); // Set loading to true before making the request
+        setLoading(true); 
         console.log('formValues', formValues);
     
+
         const payload = {
             fromAuthToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
             fromType: brokerAuthData?.accessToken?.brokerType,
             previewId: transferDetails?.previewResult?.previewId,
+            mfaCode: '6483355'
             };
     
         try {
@@ -240,11 +242,15 @@ const Step1 = ({ brokerAuthData, existingAuthData, onStepChange, setDepositAddre
             throw new Error(`Failed to Execute Transfer: ${executeTransfer.statusText}`);
           }
     
-          const response = await executePreview.json();
+          const response = await executeTransfer.json();
           console.log('response', response);
+          if(response.content.status === 'mfaRequired') {
+            console.log('mfaRequired');
+            alert('mfaRequired.  Paste in code and resend');
+          } else {
+            alert(`Transfer Status: ${response.status}.  Here is your transferId: ${response.content.executeTransferResult.transferId}`);
+          }
         
-          alert('Transfer Executed', response.content);
-          
         } catch (error) {
           console.error('An error occurred:', error.message);
         } finally {

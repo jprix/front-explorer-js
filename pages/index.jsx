@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import TransferDashboard from '../components/TransfersDashboard';
 import NetworkDashboard from 'components/NetworksDashboard';
 import TransferModal from 'components/transferModal';
+import PortfolioHoldings from 'components/PortfolioHoldings';
 
 
 const HomePage = (props) => {
@@ -66,8 +67,11 @@ const HomePage = (props) => {
 
 
   const handleExit = (error) => {
-    console.log('Broker connection closed:', error);
-    // Handle the broker connection closed event
+    if (error){
+      console.log('Broker connection closed:', error);
+    } else {
+      console.log('Broker connection closed with no erros');
+    }  
   };
 
   const handleDisconnect = async (authData) => {
@@ -155,6 +159,7 @@ const HomePage = (props) => {
           <Typography variant="body2" color="text.secondary">
             Cash: {data?.accessToken?.accountTokens[0]?.account?.cash}
           </Typography>
+          <PortfolioHoldings userId={data?.accessToken?.accountTokens[0]?.account?.accountId}/>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
 
           <Button 
