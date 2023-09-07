@@ -3,18 +3,16 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
-const PortfolioHoldings = (props) => {
+const PortfolioHoldings = () => {
   const [portfolioHoldings, setPortfolioHoldings] = useState({});
 
   useEffect(() => {
+    const payload = {
+      UserId: '12345',
+    };
     const fetchPortfolioHoldings = async () => {
       try {
-        const response = await fetch(`/api/holdings/portfolio?UserId=e1880c6d-5af8-4634-3182-08dba58a99a5`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        const response = await fetch(`/api/holdings/portfolio`);
 
         if (response.ok) {
           const data = await response.json();
@@ -34,7 +32,8 @@ const PortfolioHoldings = (props) => {
     <Card>
       <CardContent>
         <Typography variant="h6" component="div">
-          Portfolio Holdings: {portfolioHoldings?.content?.cryptocurrenciesValue}
+          Portfolio Holdings:{' '}
+          {portfolioHoldings?.content?.cryptocurrenciesValue}
         </Typography>
       </CardContent>
     </Card>

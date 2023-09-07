@@ -155,10 +155,11 @@ const TransferModal = ({
   const [validAddress, setValidAddress] = useState(false);
   const [symbol, setSymbol] = useState('ETH');
   const [chain, setChain] = useState('ethereum');
+  console.log('toType', toAuthData?.accessToken?.brokerType);
   const [formValues, setFormValues] = useState({
     fromAuthToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
     fromType: brokerAuthData?.accessToken?.brokerType,
-    toType: 'robinhood',
+    toType: toAuthData?.accessToken?.brokerType,
     networkId: depositAddress?.networkId,
     symbol: 'eth',
     toAddress: depositAddress?.address,
