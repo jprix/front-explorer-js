@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
-  const { EnableTransfers, UserId, CallbackUrl } = req.query;
+  const { EnableTransfers, UserId, CallbackUrl, BrokerType } = req.query;
 
   console.log('CallbackUrl', CallbackUrl);
   if (req.method !== 'POST') {
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   }
 
   // Conditionally building the URL
-  let queryString = `${MESH_API_URL}/api/v1/cataloglink?UserId=${UserId}&EnableTransfers=${EnableTransfers}`;
+  let queryString = `${MESH_API_URL}/api/v1/cataloglink?UserId=${UserId}&EnableTransfers=${EnableTransfers}&BrokerType=${BrokerType}`;
   if (CallbackUrl) {
     queryString += `&CallbackUrl=${CallbackUrl}`;
   }

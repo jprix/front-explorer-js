@@ -163,7 +163,7 @@ const TransferModal = ({
     networkId: depositAddress?.networkId,
     symbol: 'eth',
     toAddress: depositAddress?.address,
-    amount: 0.001,
+    amount: 0.009,
     fiatCurrency: 'USD',
   });
 

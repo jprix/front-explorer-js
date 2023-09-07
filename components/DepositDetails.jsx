@@ -25,7 +25,7 @@ const GetDepositDetails = ({
 
   return (
     <div>
-      <h2>Get {toAuthData?.accessToken?.brokerType} Deposit Address</h2>
+      <h2>Get {toAuthData?.accessToken?.brokerName} Deposit Address</h2>
 
       <Card
         sx={{

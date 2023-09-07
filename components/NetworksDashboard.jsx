@@ -18,12 +18,12 @@ function NetworkDashboard() {
   const [loading, setLoading] = useState(true); // Add loading state
   const [message, setMessage] = useState(''); // Use to store messages like "No records found" or "Error fetching data"
   const [page, setPage] = useState(0);
-  const consumerId = '12345'
+  const consumerId = '12345';
 
   useEffect(() => {
     if (consumerId) {
       setLoading(true);
-      setMessage(''); // Reset the message each time you're about to fetch
+      setMessage('');
 
       const fetchNetworks = async () => {
         try {
@@ -53,7 +53,6 @@ function NetworkDashboard() {
     }
   }, [consumerId]);
 
-  
   if (loading) {
     return <CircularProgress />;
   }
@@ -67,89 +66,86 @@ function NetworkDashboard() {
       {tab === 0 && message ? (
         <div style={{ padding: '20px', textAlign: 'center' }}>{message}</div>
       ) : (
-        renderTable(networks, [
-            'Type',
-            'Id',
-            'Name',
-            'Network Id',
-            'Chain Id',
-            'Supported Tokens',
-          ], page, setPage)
-          
+        renderTable(
+          networks,
+          ['Type', 'Id', 'Name', 'Network Id', 'Chain Id', 'Supported Tokens'],
+          page,
+          setPage
+        )
       )}
-
     </div>
   );
 }
 
 function renderTable(rows, headers, page, setPage) {
-    const rowsPerPage = 10;
-  
-    const handleChangePage = (event, newPage) => {
+  const rowsPerPage = 10;
+
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
-};
+  };
 
-    
+  const allNetworks = rows.flatMap((row) =>
+    row.networks.map((network) => ({ ...network, type: row.type }))
+  );
+  const currentPageNetworks = allNetworks.slice(
+    page * rowsPerPage,
+    (page + 1) * rowsPerPage
+  );
 
-    const allNetworks = rows.flatMap(row => row.networks.map(network => ({ ...network, type: row.type })));
-    const currentPageNetworks = allNetworks.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
-
-    return (
-      <div style={{ overflowX: 'auto' }}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 950 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                {headers.map((header) => (
-                  <TableCell key={header}>{header}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {currentPageNetworks.map((network, index) => (
-                <TableRow
-                  key={network.id + '-' + index}
-                  sx={{
-                    '&:last-child td, &:last-child th': { border: 0 },
-                    backgroundColor: index % 2 ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
-                  }}
-                >
-                  <TableCell>{network.type}</TableCell>
-                  <TableCell>
-                    <Link href={`/request/${network.id}`} passHref>
-                      {network.id}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{network.name}</TableCell>
-                  <TableCell>{network.id}</TableCell>
-                  <TableCell>{network.chainId}</TableCell>
-                  <TableCell>{network.supportedTokens.join(', ')}</TableCell>
-                </TableRow>
+  return (
+    <div style={{ overflowX: 'auto' }}>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 950 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              {headers.map((header) => (
+                <TableCell key={header}>{header}</TableCell>
               ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[]}
-                  colSpan={6}
-                  count={allNetworks.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    inputProps: { 'aria-label': 'rows per page' },
-                    native: true,
-                  }}
-                  onPageChange={handleChangePage}
-                />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {currentPageNetworks.map((network, index) => (
+              <TableRow
+                key={network.id + '-' + index}
+                sx={{
+                  '&:last-child td, &:last-child th': { border: 0 },
+                  backgroundColor:
+                    index % 2 ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
+                }}
+              >
+                <TableCell>{network.type}</TableCell>
+                <TableCell>
+                  <Link href={`/request/${network.id}`} passHref>
+                    {network.id}
+                  </Link>
+                </TableCell>
+                <TableCell>{network.name}</TableCell>
+                <TableCell>{network.id}</TableCell>
+                <TableCell>{network.chainId}</TableCell>
+                <TableCell>{network.supportedTokens.join(', ')}</TableCell>
               </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
-      </div>
-    );
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[]}
+                colSpan={6}
+                count={allNetworks.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                SelectProps={{
+                  inputProps: { 'aria-label': 'rows per page' },
+                  native: true,
+                }}
+                onPageChange={handleChangePage}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </div>
+  );
 }
-
-
-  
 
 export default NetworkDashboard;
