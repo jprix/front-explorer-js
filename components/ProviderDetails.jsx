@@ -145,6 +145,8 @@ const ProviderDetails = ({
                   onClose={() => setOpenTransferDetailsModal(false)}
                   brokerAuthData={depositAuthData}
                   existingAuthData={existingAuthData}
+                  brokerType={data?.accessToken?.brokerType}
+                  authToken={data?.accessToken?.accountTokens[0]?.accessToken}
                 />
               )}
               <PortfolioHoldings
