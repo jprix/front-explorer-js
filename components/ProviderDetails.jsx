@@ -16,6 +16,7 @@ const ProviderDetails = ({
   const [depositAuthData, setDepositAuthData] = useState({});
   const [openTransferDetailsModal, setOpenTransferDetailsModal] =
     useState(false);
+  const [selectedData, setSelectedData] = useState(null);
 
   const countdownsRef = useRef({});
 
@@ -54,8 +55,9 @@ const ProviderDetails = ({
     return () => clearInterval(timer);
   }, [updateCountdown]);
 
-  const handleTransferDetails = useCallback(async (data) => {
+  const handleTransferDetails = useCallback((data) => {
     console.log('getting transfer details', data);
+    setSelectedData(data); // Set the selected data
     setOpenTransferDetailsModal(true);
   }, []);
 
@@ -139,16 +141,20 @@ const ProviderDetails = ({
                 />
               )}
 
-              {openTransferDetailsModal && (
+              {openTransferDetailsModal && selectedData && (
                 <TransferDetailsModal
                   open={openTransferDetailsModal}
-                  onClose={() => setOpenTransferDetailsModal(false)}
-                  brokerAuthData={depositAuthData}
-                  existingAuthData={existingAuthData}
-                  brokerType={data?.accessToken?.brokerType}
-                  authToken={data?.accessToken?.accountTokens[0]?.accessToken}
+                  onClose={() => {
+                    setOpenTransferDetailsModal(false);
+                    setSelectedData(null); // Reset the selected data when closing the modal
+                  }}
+                  brokerType={selectedData.accessToken.brokerType}
+                  authToken={
+                    selectedData.accessToken.accountTokens[0]?.accessToken
+                  }
                 />
               )}
+
               <PortfolioHoldings
                 userId={data?.accessToken?.accountTokens[0]?.account?.accountId}
               />

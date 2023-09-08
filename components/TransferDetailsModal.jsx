@@ -73,12 +73,11 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
       aria-labelledby="transfer-details-dialog-title"
     >
       <DialogTitle id="transfer-details-dialog-title">
-        Transaction Details
+        Transaction Details:
       </DialogTitle>
       <DialogContent
         style={{
           width: '600px',
-          height: '400px',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -88,18 +87,61 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
         {loading ? (
           <CircularProgress style={{ margin: 0 }} />
         ) : transferDetails.length > 0 ? (
-          <TableContainer component={Paper} style={{ maxWidth: '100%' }}>
+          <TableContainer
+            component={Paper}
+            style={{ maxWidth: '100%', height: '400px', overflow: 'auto' }}
+          >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
-                <TableRow>
-                  {headers.map((header) => (
-                    <TableCell
-                      key={header}
-                      style={header === 'ID' ? { width: '90%' } : {}}
-                    >
-                      {header}
-                    </TableCell>
-                  ))}
+                <TableRow
+                  style={{
+                    backgroundColor: '#f5f5f5',
+                    borderBottom: '2px solid #e0e0e0',
+                  }}
+                >
+                  <TableCell
+                    style={{
+                      position: 'sticky',
+                      top: 0,
+                      fontWeight: 'bold',
+                      borderBottom: '2px solid #e0e0e0',
+                    }}
+                    sx={{ width: '20%' }}
+                  >
+                    Type
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      position: 'sticky',
+                      fontWeight: 'bold',
+                      borderBottom: '2px solid #e0e0e0',
+                    }}
+                    sx={{ width: '20%' }}
+                  >
+                    ID
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      position: 'sticky',
+                      top: 0,
+                      fontWeight: 'bold',
+                      borderBottom: '2px solid #e0e0e0',
+                    }}
+                    sx={{ width: '15%' }}
+                  >
+                    Symbol
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      position: 'sticky',
+                      top: 0,
+                      fontWeight: 'bold',
+                      borderBottom: '2px solid #e0e0e0',
+                    }}
+                    sx={{ width: 100 }}
+                  >
+                    Asset Type
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
