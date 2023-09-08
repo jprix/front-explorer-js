@@ -4,7 +4,14 @@ import PropTypes from 'prop-types';
 
 import { createFrontConnection } from '@front-finance/link';
 
-const MeshModal = ({ open, onClose, link, onSuccess, onExit }) => {
+const MeshModal = ({
+  open,
+  onClose,
+  link,
+  onSuccess,
+  onExit,
+  transferFinished,
+}) => {
   const [frontConnection, setFrontConnection] = useState(null);
   const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
 
@@ -22,8 +29,13 @@ const MeshModal = ({ open, onClose, link, onSuccess, onExit }) => {
           }
 
           if (onExit) {
+            console.info('FRONT EXIT');
             onExit();
           }
+        },
+        onTransferFinished: (transfer) => {
+          console.info('TRANSFER FINISHED', transfer);
+          transferFinished(transfer);
         },
       })
     );

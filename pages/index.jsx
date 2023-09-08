@@ -15,6 +15,7 @@ const HomePage = () => {
   const [catalogLink, setCatalogLink] = useState('');
   const [openTransferModal, setOpenTransferModal] = useState(false);
   const [depositAuthData, setDepositAuthData] = useState({});
+  const [countdowns, setCountdowns] = useState({});
 
   const [existingAuthData, setExistingAuthData] = useState([]);
 
@@ -30,6 +31,26 @@ const HomePage = () => {
   useEffect(() => {
     console.log('Deposit auth data updated:', depositAuthData);
   }, [depositAuthData]);
+
+  useEffect(() => {
+    const timer = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(timer); // Clear the interval on component unmount
+  }, [existingAuthData]);
+
+  const updateCountdown = () => {
+    let newCountdowns = {};
+
+    existingAuthData.forEach((data) => {
+      const timeLeft = Math.max(
+        0,
+        (data.accessToken.expiryTimestamp - new Date().getTime()) / 1000
+      ); // in seconds
+      newCountdowns[data.accessToken.brokerName] = timeLeft;
+    });
+
+    setCountdowns(newCountdowns);
+  };
 
   const getCatalogLink = async () => {
     const link = await fetch(`/api/catalog?&EnableTransfers=false`, {
@@ -51,9 +72,12 @@ const HomePage = () => {
   };
 
   const handleSuccess = (newAuthData) => {
-    console.log('Broker connected successfully:', newAuthData);
+    console.log('Broker connected successfully:');
     const updatedAuthData = [...existingAuthData, newAuthData];
     setExistingAuthData(updatedAuthData);
+    const expiryTimestamp =
+      new Date().getTime() + newAuthData.accessToken.expiresInSeconds * 1000;
+    newAuthData.accessToken.expiryTimestamp = expiryTimestamp;
 
     const maxExpiresInSeconds = Math.max(
       ...updatedAuthData.map((obj) => obj.accessToken.expiresInSeconds)
@@ -148,7 +172,9 @@ const HomePage = () => {
                     Broker Type: {data?.accessToken?.brokerType}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Expires In: {data?.accessToken?.expiresInSeconds} seconds
+                    Auth token expires in:{' '}
+                    {Math.round(countdowns[data?.accessToken?.brokerName] || 0)}{' '}
+                    seconds
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Account Name:{' '}

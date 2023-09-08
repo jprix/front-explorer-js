@@ -4,13 +4,14 @@ import { useRouter } from 'next/router';
 
 import {
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  TextField,
 } from '@mui/material';
 
-const TransferPage = () => {
+const PayPage = () => {
   const [catalogLink, setCatalogLink] = useState('');
   const [openMeshModal, setOpenMeshModal] = useState(false);
   const [existingAuthData, setExistingAuthData] = useState([]);
@@ -18,15 +19,7 @@ const TransferPage = () => {
   const [loading, setLoading] = useState(true); // Add loading state
   const [errorMessage, setErrorMessage] = useState(''); // Use to store messages like "No records found" or "Error fetching data"
 
-  // State for select fields
-  const [selectedType, setSelectedType] = useState('');
-  const [selectedToken, setSelectedToken] = useState('');
-  const [selectedNetworkId, setSelectedNetworkId] = useState('');
-
   const router = useRouter();
-  const handleTypeChange = (e) => setSelectedType(e.target.value);
-  const handleTokenChange = (e) => setSelectedToken(e.target.value);
-  const handleNetworkIdChange = (e) => setSelectedNetworkId(e.target.value);
 
   useEffect(() => {
     const fetchNetworks = async () => {
@@ -66,11 +59,12 @@ const TransferPage = () => {
   }, [existingAuthData]);
 
   const payload = {
+    amountInFiat: 10,
     toAddresses: [
       {
-        symbol: selectedToken, // symbol to transfer
+        symbol: 'USDC', // symbol to transfer
         address: '0xcC90c7c3E3Ad6e4E6bd8CF4fB10D09edC20a9506', // address to transfer
-        networkId: selectedNetworkId, // network id from /api/v1/transfers/managed/networks request
+        networkId: 'e3c7fdd8-b1fc-4e51-85ae-bb276e075611', // polygon network id
       },
     ],
   };
@@ -78,7 +72,7 @@ const TransferPage = () => {
   const getCatalogLink = async () => {
     try {
       const link = await fetch(
-        `/api/catalog?Userid=1234567&BrokerType=${selectedType}&EnableTransfers=true`,
+        `/api/catalog?Userid=1234567&EnableTransfers=true`,
         {
           method: 'POST',
           headers: {
@@ -111,7 +105,7 @@ const TransferPage = () => {
 
   const handleTransferFinished = (transferDetails) => {
     console.log('transferDetails', transferDetails);
-    alert('Transfer Success!');
+    alert('Payment Success!');
     router.push('/');
   };
 
@@ -119,65 +113,87 @@ const TransferPage = () => {
     console.log('Broker connection closed:', error);
   };
 
+  const [product, setProduct] = useState({
+    name: 'Front NFT',
+    price: '10 USDC',
+    description: 'Exotic Front NFT',
+    imageUrl:
+      'https://mma.prnewswire.com/media/1334250/Front_Finance_Logo.jpg?p=facebook',
+  });
+
+  const handleProductChange = (event) => {
+    const { name, value } = event.target;
+    setProduct((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+
   return (
     <div>
-      <h1>Embedded Deposits</h1>
+      <h1>Pay</h1>
 
-      {/* Select Menu */}
       {!loading && networks.length ? (
         <form>
-          {/* Type Dropdown */}
-          <FormControl fullWidth variant="outlined" margin="normal">
-            <InputLabel>Type</InputLabel>
-            <Select value={selectedType} onChange={handleTypeChange}>
-              {networks.map((integration) => (
-                <MenuItem key={integration.type} value={integration.type}>
-                  {integration.type}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {/* Network Dropdown - Only display if a type is selected */}
-          {selectedType && (
-            <FormControl fullWidth variant="outlined" margin="normal">
-              <InputLabel>Network</InputLabel>
-              <Select
-                value={selectedNetworkId}
-                onChange={handleNetworkIdChange}
-              >
-                {networks
-                  .find((integration) => integration.type === selectedType)
-                  .networks.map((network) => (
-                    <MenuItem key={network.id} value={network.id}>
-                      {network.name}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-          )}
-
-          {/* Token Dropdown - Only display if a network is selected */}
-          {selectedNetworkId && (
-            <FormControl fullWidth variant="outlined" margin="normal">
-              <InputLabel>Token</InputLabel>
-              <Select value={selectedToken} onChange={handleTokenChange}>
-                {networks
-                  .find((integration) => integration.type === selectedType)
-                  .networks.find((network) => network.id === selectedNetworkId)
-                  .supportedTokens.map((token) => (
-                    <MenuItem key={token} value={token}>
-                      {token}
-                    </MenuItem>
-                  ))}
-              </Select>
+          <Card>
+            <CardHeader title="Product Details" />
+            <div style={{ display: 'flex' }}>
+              <CardMedia
+                component="img"
+                height="140"
+                width="140"
+                image={product.imageUrl}
+                alt={product.name}
+              />
+              <CardContent>
+                <TextField
+                  disabled
+                  fullWidth
+                  label="Product Name"
+                  variant="outlined"
+                  name="name"
+                  value={product.name}
+                  onChange={handleProductChange}
+                />
+                <TextField
+                  disabled
+                  fullWidth
+                  label="Price"
+                  variant="outlined"
+                  name="price"
+                  value={product.price}
+                  onChange={handleProductChange}
+                  style={{ marginTop: '16px' }}
+                />
+                <TextField
+                  disabled
+                  fullWidth
+                  label="Description"
+                  variant="outlined"
+                  name="description"
+                  value={product.description}
+                  onChange={handleProductChange}
+                  style={{ marginTop: '16px' }}
+                />
+              </CardContent>
               {errorMessage ? <p>{errorMessage}</p> : null}
-            </FormControl>
-          )}
-
-          <Button onClick={getCatalogLink} variant="contained" color="primary">
-            Submit
-          </Button>
+            </div>
+          </Card>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginTop: '16px',
+            }}
+          >
+            <Button
+              onClick={getCatalogLink}
+              variant="contained"
+              color="primary"
+            >
+              Buy Now
+            </Button>
+          </div>
         </form>
       ) : (
         <p>Loading...</p>
@@ -197,4 +213,4 @@ const TransferPage = () => {
   );
 };
 
-export default TransferPage;
+export default PayPage;
