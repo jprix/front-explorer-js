@@ -50,7 +50,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
             response.status
           );
         }
-        if (response && response.length === 0) {
+        if (response && data.content.total === 0) {
           setMessage('No records found.');
         } else {
           setTransferDetails(data.content.transactions);
