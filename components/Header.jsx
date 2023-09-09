@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 
-const Header = () => {
+const Header = ({ getCatalogLink, connectAnotherAccount }) => {
   const [dropdownValue, setDropdownValue] = useState('');
 
   const handleDropdownChange = (event) => {
@@ -67,6 +67,18 @@ const Header = () => {
             <MenuItem value="transfers-page">
               <Link href="/transfers">Transfers</Link>
             </MenuItem>
+            {connectAnotherAccount ? (
+              <MenuItem>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={getCatalogLink}
+                >
+                  Link Another Account
+                </Button>
+              </MenuItem>
+            ) : null}
+            <MenuItem></MenuItem>
           </Select>
         </FormControl>
       </Toolbar>

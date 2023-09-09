@@ -18,44 +18,21 @@ const ProviderDetails = ({
     useState(false);
   const [selectedData, setSelectedData] = useState(null);
 
-  const countdownsRef = useRef({});
-
   const updateCountdown = useCallback(() => {
     let newCountdowns = {};
 
     existingAuthData.forEach((data) => {
-      const timeLeft = Math.max(
-        0,
-        (data.accessToken.expiryTimestamp - new Date().getTime()) / 1000
-      );
-      newCountdowns[data.accessToken.brokerName] = timeLeft;
+      if (data.accessToken.expiryTimestamp) {
+        const timeLeft = Math.max(
+          0,
+          (data.accessToken.expiryTimestamp - new Date().getTime()) / 1000
+        );
+        newCountdowns[data.accessToken.brokerName] = timeLeft;
+      } else {
+        newCountdowns[data.accessToken.brokerName] = ' No expiry found';
+      }
     });
-
-    const countdownsChanged = existingAuthData.some((data) => {
-      const brokerName = data.accessToken.brokerName;
-      return (
-        !countdownsRef.current[brokerName] ||
-        countdownsRef.current[brokerName] !== newCountdowns[brokerName]
-      );
-    });
-
-    if (countdownsChanged) {
-      countdownsRef.current = newCountdowns;
-      // only call setCountdowns when you want to cause a re-render
-      setCountdowns(newCountdowns);
-    }
-
-    // Filter out any expired authData items (i.e., those with a countdown of zero)
-    const filteredAuthData = existingAuthData.filter((data) => {
-      const brokerName = data.accessToken.brokerName;
-      return countdownsRef.current[brokerName] > 0;
-    });
-
-    // If the length of existingAuthData and filteredAuthData are different, it means items were removed
-    if (existingAuthData.length !== filteredAuthData.length) {
-      setExistingAuthData(filteredAuthData);
-      localStorage.setItem('authData', JSON.stringify(filteredAuthData));
-    }
+    setCountdowns(newCountdowns);
   }, [existingAuthData]);
 
   useEffect(() => {
@@ -128,11 +105,13 @@ const ProviderDetails = ({
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Auth token expires in:
-                {Math.round(
-                  countdowns[data?.accessToken?.brokerName] || 0
-                )}{' '}
-                seconds
+                {typeof countdowns[data?.accessToken?.brokerName] === 'number'
+                  ? `${Math.round(
+                      countdowns[data?.accessToken?.brokerName] || 0
+                    )} seconds`
+                  : countdowns[data?.accessToken?.brokerName]}
               </Typography>
+
               <Typography variant="body2" color="text.secondary">
                 Account Name:{' '}
                 {data?.accessToken?.accountTokens[0].account.accountName}

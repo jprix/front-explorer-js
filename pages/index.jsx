@@ -8,12 +8,19 @@ import Header from '../components/Header';
 const HomePage = () => {
   const [existingAuthData, setExistingAuthData] = useState([]);
   const [catalogLink, setCatalogLink] = useState('');
+  const [connectAnotherAccount, setConnectAnotherAccount] = useState(false);
 
   const [openMeshModal, setOpenMeshModal] = useState(false);
 
   useEffect(() => {
     const authData = localStorage.getItem('authData');
     setExistingAuthData(authData ? JSON.parse(authData) : []);
+    if (existingAuthData.length <= 1) {
+      console.log('allow another link');
+      setConnectAnotherAccount(true);
+    } else {
+      setConnectAnotherAccount(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -68,17 +75,27 @@ const HomePage = () => {
   console.log('homepage');
   return (
     <div>
-      <Header />
-      <h1>Mesh Explorer</h1>
-      {existingAuthData === undefined || existingAuthData.length === 0 ? (
-        <Button variant="contained" color="primary" onClick={getCatalogLink}>
-          Connect to Mesh
-        </Button>
-      ) : existingAuthData.length <= 1 ? (
-        <Button variant="contained" color="primary" onClick={getCatalogLink}>
-          Link Another Account
-        </Button>
-      ) : null}
+      <Header
+        connectAnotherAccount={connectAnotherAccount}
+        getCatalogLink={getCatalogLink}
+      />
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          paddingTop: '10px',
+        }}
+      >
+        {existingAuthData === undefined || existingAuthData.length === 0 ? (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={getCatalogLink}
+          >
+            Connect to Mesh
+          </Button>
+        ) : null}
+      </div>
       {openMeshModal && (
         <MeshModal
           open={openMeshModal}
