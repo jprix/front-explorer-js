@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -16,11 +16,20 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
+import { TransferContext } from '../context/transferContext';
 
 const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
-  const [loading, setLoading] = useState(true);
-  const [transferDetails, setTransferDetails] = useState({});
-  const [message, setMessage] = useState('');
+  const {
+    transferDetails,
+    getTransferDetails,
+    loading,
+    message,
+    setLoadingTransfers,
+  } = useContext(TransferContext);
+
+  const [lastBrokerType, setLastBrokerType] = useState(brokerType);
+  console.log('transferDetails', transferDetails);
+  const lastBrokerTypeRef = useRef(null);
 
   useEffect(() => {
     const payload = {
@@ -31,39 +40,24 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
 
     const fetchTransfers = async () => {
       try {
-        setLoading(true);
-        const response = await fetch('/api/transactions/list', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-
-        const data = await response.json(); // Always parse the response first.
-
-        if (!response.ok) {
-          // Throw an error if the server responded with a non-200 status code.
-          setMessage(data.error || 'Something went wrong');
-          throw new Error(
-            data.error || 'Something went wrong',
-            response.status
-          );
-        }
-        if (response && data.content.total === 0) {
-          setMessage('No records found.');
-        } else {
-          setTransferDetails(data.content.transactions);
-        }
+        setLoadingTransfers(true);
+        await getTransferDetails(payload);
       } catch (error) {
         console.log('error', error);
       } finally {
-        setLoading(false);
+        setLastBrokerType(brokerType);
+        setLoadingTransfers(false);
       }
     };
 
-    fetchTransfers();
-  }, []);
+    if (
+      (!transferDetails || transferDetails.length === 0) &&
+      lastBrokerTypeRef.current !== brokerType
+    ) {
+      fetchTransfers();
+      lastBrokerTypeRef.current = brokerType;
+    }
+  }, [transferDetails, brokerType, getTransferDetails, setLoadingTransfers]);
 
   return (
     <Dialog
@@ -115,7 +109,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                       fontWeight: 'bold',
                       borderBottom: '2px solid #e0e0e0',
                     }}
-                    sx={{ width: '20%' }}
+                    sx={{ width: '10%' }}
                   >
                     ID
                   </TableCell>
