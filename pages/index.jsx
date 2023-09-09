@@ -3,6 +3,7 @@ import { Button, Grid } from '@mui/material';
 import ProviderDetails from '../components/ProviderDetails';
 import NetworkDashboard from '../components/NetworksDashboard';
 import MeshModal from '../components/MeshModal';
+import Header from '../components/Header';
 
 const HomePage = () => {
   const [existingAuthData, setExistingAuthData] = useState([]);
@@ -67,6 +68,7 @@ const HomePage = () => {
   console.log('homepage');
   return (
     <div>
+      <Header />
       <h1>Mesh Explorer</h1>
       {existingAuthData === undefined || existingAuthData.length === 0 ? (
         <Button variant="contained" color="primary" onClick={getCatalogLink}>

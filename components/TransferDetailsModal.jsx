@@ -44,6 +44,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
 
         if (!response.ok) {
           // Throw an error if the server responded with a non-200 status code.
+          setMessage(data.error || 'Something went wrong');
           throw new Error(
             data.error || 'Something went wrong',
             response.status
@@ -63,8 +64,6 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
 
     fetchTransfers();
   }, []);
-
-  const headers = ['Type', 'ID', 'Symbol', 'Asset Type'];
 
   return (
     <Dialog
