@@ -10,6 +10,7 @@ import {
   TableHead,
   TableCell,
   TableBody,
+  Tooltip,
 } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
@@ -32,10 +33,19 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   const lastBrokerTypeRef = useRef(null);
 
   useEffect(() => {
+    const millisecondsInADay = 24 * 60 * 60 * 1000;
+    const currentTimestampMilliseconds = Date.now();
+    const date30DaysBackMilliseconds =
+      currentTimestampMilliseconds - 30 * millisecondsInADay;
+    const date30DaysBackTimestamp = Math.floor(
+      date30DaysBackMilliseconds / 1000
+    );
+    console.log(date30DaysBackTimestamp);
     const payload = {
       authToken: authToken,
       type: brokerType,
       count: 10,
+      from: date30DaysBackTimestamp,
     };
 
     const fetchTransfers = async () => {
@@ -66,8 +76,10 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
       aria-labelledby="transfer-details-dialog-title"
     >
       <DialogTitle id="transfer-details-dialog-title">
-        Transaction Details:
+        {brokerType.charAt(0).toUpperCase() + brokerType.slice(1)} Transaction
+        Details:
       </DialogTitle>
+
       <DialogContent
         style={{
           width: '600px',
@@ -84,7 +96,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
             component={Paper}
             style={{ maxWidth: '100%', height: '400px', overflow: 'auto' }}
           >
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ minWidth: 500 }} aria-label="simple table">
               <TableHead>
                 <TableRow
                   style={{
@@ -99,7 +111,18 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                       fontWeight: 'bold',
                       borderBottom: '2px solid #e0e0e0',
                     }}
-                    sx={{ width: '20%' }}
+                    sx={{ width: '8%' }}
+                  >
+                    Date
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      position: 'sticky',
+                      top: 0,
+                      fontWeight: 'bold',
+                      borderBottom: '2px solid #e0e0e0',
+                    }}
+                    sx={{ width: '10%' }}
                   >
                     Type
                   </TableCell>
@@ -109,7 +132,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                       fontWeight: 'bold',
                       borderBottom: '2px solid #e0e0e0',
                     }}
-                    sx={{ width: '10%' }}
+                    sx={{ width: '20%' }}
                   >
                     ID
                   </TableCell>
@@ -131,7 +154,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                       fontWeight: 'bold',
                       borderBottom: '2px solid #e0e0e0',
                     }}
-                    sx={{ width: 100 }}
+                    sx={{ width: '10%' }}
                   >
                     Asset Type
                   </TableCell>
@@ -147,11 +170,21 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                         index % 2 ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
                     }}
                   >
+                    <TableCell>
+                      <TableCell>
+                        {new Date(
+                          detail.createdTimestamp * 1000
+                        ).toLocaleDateString()}
+                      </TableCell>
+                    </TableCell>
                     <TableCell>{detail.transactionType}</TableCell>
-                    <TableCell style={{ width: '50%' }}>
-                      <Link href={`/request/${detail.id}`} passHref>
-                        {detail.id}
-                      </Link>
+
+                    <TableCell style={{ width: '20%' }}>
+                      <Tooltip title={detail.id} placement="top">
+                        <Link href={`/request/${detail.id}`} passHref>
+                          View Details
+                        </Link>
+                      </Tooltip>
                     </TableCell>
                     <TableCell>{detail.name}</TableCell>
                     <TableCell>{detail.assetType}</TableCell>

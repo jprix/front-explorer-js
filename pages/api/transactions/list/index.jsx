@@ -1,6 +1,4 @@
 export default async function handler(req, res) {
-  console.log('*** hit preview ', req.method, req.body); // log the request method and body
-
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
 
   if (req.method !== 'POST') {
