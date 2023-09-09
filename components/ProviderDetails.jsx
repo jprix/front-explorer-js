@@ -23,16 +23,13 @@ const ProviderDetails = ({
   const updateCountdown = useCallback(() => {
     let newCountdowns = {};
 
-    existingAuthData.forEach(
-      (data) => {
-        const timeLeft = Math.max(
-          0,
-          (data.accessToken.expiryTimestamp - new Date().getTime()) / 1000
-        );
-        newCountdowns[data.accessToken.brokerName] = timeLeft;
-      },
-      [existingAuthData]
-    );
+    existingAuthData.forEach((data) => {
+      const timeLeft = Math.max(
+        0,
+        (data.accessToken.expiryTimestamp - new Date().getTime()) / 1000
+      );
+      newCountdowns[data.accessToken.brokerName] = timeLeft;
+    });
 
     const countdownsChanged = existingAuthData.some((data) => {
       const brokerName = data.accessToken.brokerName;
@@ -47,7 +44,19 @@ const ProviderDetails = ({
       // only call setCountdowns when you want to cause a re-render
       setCountdowns(newCountdowns);
     }
-  });
+
+    // Filter out any expired authData items (i.e., those with a countdown of zero)
+    const filteredAuthData = existingAuthData.filter((data) => {
+      const brokerName = data.accessToken.brokerName;
+      return countdownsRef.current[brokerName] > 0;
+    });
+
+    // If the length of existingAuthData and filteredAuthData are different, it means items were removed
+    if (existingAuthData.length !== filteredAuthData.length) {
+      setExistingAuthData(filteredAuthData);
+      localStorage.setItem('authData', JSON.stringify(filteredAuthData));
+    }
+  }, [existingAuthData]);
 
   useEffect(() => {
     const timer = setInterval(updateCountdown, 1000);
@@ -118,8 +127,10 @@ const ProviderDetails = ({
                 Broker Type: {data?.accessToken?.brokerType}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Auth token expires in:{' '}
-                {Math.round(countdowns[data?.accessToken?.brokerName] || 0)}{' '}
+                Auth token expires in:
+                {Math.round(
+                  countdowns[data?.accessToken?.brokerName] || 0
+                )}{' '}
                 seconds
               </Typography>
               <Typography variant="body2" color="text.secondary">
