@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -11,49 +11,35 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { TableFooter, TablePagination } from '@mui/material';
 import Paper from '@mui/material/Paper';
+import { NetworksContext } from '../context/networksContexts';
 
 function NetworkDashboard() {
+  const {
+    loadingNetworks,
+    setLoadingNetworks,
+    networks,
+    getNetworks,
+    message,
+  } = useContext(NetworksContext);
   const [tab, setTab] = useState(0);
-  const [networks, setNetworks] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [message, setMessage] = useState(''); // Use to store messages like "No records found" or "Error fetching data"
   const [page, setPage] = useState(0);
-  const consumerId = '12345';
 
   useEffect(() => {
-    if (consumerId) {
-      setLoading(true);
-      setMessage('');
+    const fetchNetworks = async () => {
+      try {
+        setLoadingNetworks(true);
+        await getNetworks();
+      } catch (error) {
+        console.log('error', error);
+      } finally {
+        setLoadingNetworks(false);
+      }
+    };
 
-      const fetchNetworks = async () => {
-        try {
-          const response = await fetch(`/api/networks`);
+    fetchNetworks();
+  }, []);
 
-          if (!response.ok) {
-            // If the server responded with an error, throw it so that it can be caught in the catch block
-            throw new Error(data.error || 'Something went wrong');
-          }
-
-          const data = await response.json();
-
-          if (response && response.length === 0) {
-            setMessage('No records found.');
-          } else {
-            setNetworks(data.content.integrations);
-          }
-        } catch (error) {
-          console.error('An error occurred:', error.message);
-          setMessage('Error fetching data.'); // Set the error message here
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchNetworks();
-    }
-  }, [consumerId]);
-
-  if (loading) {
+  if (loadingNetworks) {
     return <CircularProgress />;
   }
 

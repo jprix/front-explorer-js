@@ -29,7 +29,6 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   } = useContext(TransferContext);
 
   const [lastBrokerType, setLastBrokerType] = useState(brokerType);
-  console.log('transferDetails', transferDetails);
   const lastBrokerTypeRef = useRef(null);
 
   useEffect(() => {
@@ -76,8 +75,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
       aria-labelledby="transfer-details-dialog-title"
     >
       <DialogTitle id="transfer-details-dialog-title">
-        {brokerType.charAt(0).toUpperCase() + brokerType.slice(1)} Transaction
-        Details:
+        {brokerType.charAt(0).toUpperCase() + brokerType.slice(1)} Transactions:
       </DialogTitle>
 
       <DialogContent
@@ -200,7 +198,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="secondary">
           Close
         </Button>
       </DialogActions>
