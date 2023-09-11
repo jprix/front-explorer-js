@@ -6,9 +6,7 @@ import PortfolioHoldings from './PortfolioHoldings';
 
 const ProviderDetails = ({
   existingAuthData,
-  openMeshModal,
-  setOpenMeshModal,
-  catalogLink,
+
   setExistingAuthData,
 }) => {
   const [countdowns, setCountdowns] = useState({});

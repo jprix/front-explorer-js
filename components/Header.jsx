@@ -43,7 +43,6 @@ const Header = ({ getCatalogLink, connectAnotherAccount }) => {
         </Link>
 
         <FormControl>
-          <WideInputLabel id="pages-dropdown-label">Demos</WideInputLabel>
           <Select
             labelId="pages-dropdown-label"
             id="pages-dropdown"
@@ -57,7 +56,7 @@ const Header = ({ getCatalogLink, connectAnotherAccount }) => {
                 aria-haspopup="true"
                 color="inherit"
               >
-                Profile
+                Demos{' '}
               </Button>
             )}
           >

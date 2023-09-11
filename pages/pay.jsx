@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MeshModal from '../components/MeshModal';
 import { useRouter } from 'next/router';
+import Header from '../components/Header';
 
 import {
   Button,
@@ -131,6 +132,8 @@ const PayPage = () => {
 
   return (
     <div>
+      <Header />
+
       <h1>Pay</h1>
 
       {!loading && networks.length ? (

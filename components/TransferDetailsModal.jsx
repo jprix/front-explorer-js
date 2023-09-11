@@ -11,15 +11,18 @@ import {
   TableCell,
   TableBody,
   Tooltip,
+  Typography,
+  Grid,
 } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { TransferContext } from '../context/transferContext';
 
 const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
+  const [openDetails, setOpenDetails] = useState(false);
+
   const {
     transferDetails,
     getTransferDetails,
@@ -28,8 +31,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
     setLoadingTransfers,
   } = useContext(TransferContext);
 
-  const [lastBrokerType, setLastBrokerType] = useState(brokerType);
-  const lastBrokerTypeRef = useRef(null);
+  const lastBrokerTypeRef = useRef('');
 
   useEffect(() => {
     const millisecondsInADay = 24 * 60 * 60 * 1000;
@@ -48,113 +50,65 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
     };
 
     const fetchTransfers = async () => {
+      console.log(brokerType, !transferDetails, transferDetails.length === 0);
       try {
-        setLoadingTransfers(true);
-        await getTransferDetails(payload);
+        if (
+          !transferDetails ||
+          transferDetails.length === 0 ||
+          lastBrokerTypeRef.current !== brokerType
+        ) {
+          setLoadingTransfers(true);
+          await getTransferDetails(payload); // Added await here
+          lastBrokerTypeRef.current = brokerType;
+        }
       } catch (error) {
         console.log('error', error);
       } finally {
-        setLastBrokerType(brokerType);
         setLoadingTransfers(false);
       }
     };
 
-    if (
-      (!transferDetails || transferDetails.length === 0) &&
-      lastBrokerTypeRef.current !== brokerType
-    ) {
-      fetchTransfers();
-      lastBrokerTypeRef.current = brokerType;
-    }
-  }, [transferDetails, brokerType, getTransferDetails, setLoadingTransfers]);
+    fetchTransfers();
+  }, []);
+
+  const handleOpen = () => {
+    setOpenDetails(true);
+  };
+
+  const handleClose = () => {
+    setOpenDetails(false);
+  };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
       aria-labelledby="transfer-details-dialog-title"
+      maxWidth="md" // Ensure the dialog doesn't stretch beyond screen bounds
     >
       <DialogTitle id="transfer-details-dialog-title">
         {brokerType.charAt(0).toUpperCase() + brokerType.slice(1)} Transactions:
       </DialogTitle>
-
-      <DialogContent
-        style={{
-          width: '600px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 0,
-        }}
-      >
+      <DialogContent>
         {loading ? (
-          <CircularProgress style={{ margin: 0 }} />
+          <CircularProgress />
         ) : transferDetails.length > 0 ? (
           <TableContainer
             component={Paper}
-            style={{ maxWidth: '100%', height: '400px', overflow: 'auto' }}
+            style={{ maxHeight: '400px', overflow: 'auto' }} // Adjusted the max height
           >
-            <Table sx={{ minWidth: 500 }} aria-label="simple table">
+            <Table aria-label="simple table">
               <TableHead>
-                <TableRow
-                  style={{
-                    backgroundColor: '#f5f5f5',
-                    borderBottom: '2px solid #e0e0e0',
-                  }}
-                >
-                  <TableCell
-                    style={{
-                      position: 'sticky',
-                      top: 0,
-                      fontWeight: 'bold',
-                      borderBottom: '2px solid #e0e0e0',
-                    }}
-                    sx={{ width: '8%' }}
-                  >
-                    Date
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      position: 'sticky',
-                      top: 0,
-                      fontWeight: 'bold',
-                      borderBottom: '2px solid #e0e0e0',
-                    }}
-                    sx={{ width: '10%' }}
-                  >
-                    Type
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      position: 'sticky',
-                      fontWeight: 'bold',
-                      borderBottom: '2px solid #e0e0e0',
-                    }}
-                    sx={{ width: '20%' }}
-                  >
+                <TableRow style={{ backgroundColor: '#f5f5f5' }}>
+                  {/* Moved ID to the first position */}
+                  <TableCell style={{ fontWeight: 'bold', width: '6%' }}>
                     ID
                   </TableCell>
-                  <TableCell
-                    style={{
-                      position: 'sticky',
-                      top: 0,
-                      fontWeight: 'bold',
-                      borderBottom: '2px solid #e0e0e0',
-                    }}
-                    sx={{ width: '15%' }}
-                  >
-                    Symbol
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      position: 'sticky',
-                      top: 0,
-                      fontWeight: 'bold',
-                      borderBottom: '2px solid #e0e0e0',
-                    }}
-                    sx={{ width: '10%' }}
-                  >
-                    Asset Type
+                  <TableCell style={{ fontWeight: 'bold' }}>Date</TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>Type</TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>Symbol</TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>
+                    View Details
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -162,37 +116,67 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                 {transferDetails.map((detail, index) => (
                   <TableRow
                     key={detail.id + '-' + index}
-                    sx={{
-                      '&:last-child td, &:last-child th': { border: 0 },
-                      backgroundColor:
-                        index % 2 ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
-                    }}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
+                    <TableCell
+                      style={{
+                        maxWidth: '100px', // Adjust based on your needs
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {detail.id}
+                    </TableCell>
+
                     <TableCell>
-                      <TableCell>
-                        {new Date(
-                          detail.createdTimestamp * 1000
-                        ).toLocaleDateString()}
-                      </TableCell>
+                      {new Date(
+                        detail.createdTimestamp * 1000
+                      ).toLocaleDateString()}
                     </TableCell>
                     <TableCell>{detail.transactionType}</TableCell>
-
-                    <TableCell style={{ width: '20%' }}>
+                    <TableCell>{detail.symbol}</TableCell>
+                    <TableCell>
                       <Tooltip title={detail.id} placement="top">
-                        <Link href={`/request/${detail.id}`} passHref>
-                          View Details
-                        </Link>
+                        <Button onClick={handleOpen}>View Details</Button>
                       </Tooltip>
+                      <Dialog
+                        open={openDetails}
+                        onClose={handleClose}
+                        aria-labelledby="detail-dialog-title"
+                      >
+                        <DialogTitle id="detail-dialog-title">
+                          Detail Information
+                        </DialogTitle>
+                        <DialogContent>
+                          <Grid container spacing={2}>
+                            {Object.entries(detail).map(([key, value]) => (
+                              <Grid item xs={12} sm={6} key={key}>
+                                <Typography variant="subtitle2">
+                                  {key}:
+                                </Typography>
+                                <Typography variant="body2">
+                                  {value.toString()}
+                                </Typography>
+                              </Grid>
+                            ))}
+                          </Grid>
+                        </DialogContent>
+                        <DialogActions>
+                          {/* Close button for the detailed view */}
+                          <Button onClick={handleClose} color="primary">
+                            Close
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
                     </TableCell>
-                    <TableCell>{detail.name}</TableCell>
-                    <TableCell>{detail.assetType}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
         ) : (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
             <p>{message}</p>
           </div>
         )}

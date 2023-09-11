@@ -23,6 +23,7 @@ function NetworkDashboard() {
   } = useContext(NetworksContext);
   const [tab, setTab] = useState(0);
   const [page, setPage] = useState(0);
+  const [showTable, setShowTable] = useState(false); // state variable to control table visibility
 
   useEffect(() => {
     const fetchNetworks = async () => {
@@ -47,9 +48,11 @@ function NetworkDashboard() {
     <div>
       <Tabs value={tab}>
         <Tab label="Supported Networks" />
-        {/* <Tab label="Reviews" /> */}
       </Tabs>
-      {tab === 0 && message ? (
+      {!showTable ? (
+        // Display a button to show the table
+        <button onClick={() => setShowTable(true)}>Show Table</button>
+      ) : tab === 0 && message ? (
         <div style={{ padding: '20px', textAlign: 'center' }}>{message}</div>
       ) : (
         renderTable(
