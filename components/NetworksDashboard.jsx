@@ -9,6 +9,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Button from '@mui/material/Button';
 import { TableFooter, TablePagination } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { NetworksContext } from '../context/networksContexts';
@@ -50,8 +51,15 @@ function NetworkDashboard() {
         <Tab label="Supported Networks" />
       </Tabs>
       {!showTable ? (
-        // Display a button to show the table
-        <button onClick={() => setShowTable(true)}>Show Table</button>
+        <Button
+          variant="contained"
+          color="secondary"
+          style={{ marginTop: '20px' }}
+          size="small"
+          onClick={() => setShowTable(true)}
+        >
+          Show Table
+        </Button>
       ) : tab === 0 && message ? (
         <div style={{ padding: '20px', textAlign: 'center' }}>{message}</div>
       ) : (

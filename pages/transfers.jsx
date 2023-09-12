@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MeshModal from '../components/MeshModal';
 import { useRouter } from 'next/router';
+import Header from '../components/Header';
 
 import {
   Button,
@@ -41,13 +42,13 @@ const TransferPage = () => {
         const data = await response.json();
 
         if (response && response.length === 0) {
-          setMessage('No records found.');
+          setErrorMessage('No records found.');
         } else {
           setNetworks(data.content.integrations);
         }
       } catch (error) {
         console.error('An error occurred:', error.message);
-        setMessage('Error fetching data.'); // Set the error message here
+        setErrorMessage('Error fetching data.'); // Set the error message here
       } finally {
         setLoading(false);
       }
@@ -121,12 +122,11 @@ const TransferPage = () => {
 
   return (
     <div>
+      <Header />
       <h1>Embedded Deposits</h1>
 
-      {/* Select Menu */}
       {!loading && networks.length ? (
         <form>
-          {/* Type Dropdown */}
           <FormControl fullWidth variant="outlined" margin="normal">
             <InputLabel>Type</InputLabel>
             <Select value={selectedType} onChange={handleTypeChange}>
@@ -138,7 +138,6 @@ const TransferPage = () => {
             </Select>
           </FormControl>
 
-          {/* Network Dropdown - Only display if a type is selected */}
           {selectedType && (
             <FormControl fullWidth variant="outlined" margin="normal">
               <InputLabel>Network</InputLabel>
@@ -157,7 +156,6 @@ const TransferPage = () => {
             </FormControl>
           )}
 
-          {/* Token Dropdown - Only display if a network is selected */}
           {selectedNetworkId && (
             <FormControl fullWidth variant="outlined" margin="normal">
               <InputLabel>Token</InputLabel>

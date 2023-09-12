@@ -13,7 +13,7 @@ import {
 import { styled } from '@mui/system';
 
 const Header = ({ getCatalogLink, connectAnotherAccount }) => {
-  const [dropdownValue, setDropdownValue] = useState('');
+  const [dropdownValue, setDropdownValue] = useState('default');
 
   const handleDropdownChange = (event) => {
     setDropdownValue(event.target.value);
@@ -49,16 +49,9 @@ const Header = ({ getCatalogLink, connectAnotherAccount }) => {
             style={{ width: '100px' }}
             value={dropdownValue}
             onChange={handleDropdownChange}
-            renderValue={() => (
-              <Button
-                aria-label="profile-menu"
-                aria-controls="profile-menu"
-                aria-haspopup="true"
-                color="inherit"
-              >
-                Demos{' '}
-              </Button>
-            )}
+            renderValue={() =>
+              dropdownValue === 'default' ? 'Demos' : 'Demos'
+            }
           >
             <MenuItem value="pay-page">
               <Link href="/pay">Pay</Link>

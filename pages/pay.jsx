@@ -35,13 +35,13 @@ const PayPage = () => {
         const data = await response.json();
 
         if (response && response.length === 0) {
-          setMessage('No records found.');
+          setErrorMessage('No records found.');
         } else {
           setNetworks(data.content.integrations);
         }
       } catch (error) {
         console.error('An error occurred:', error.message);
-        setMessage('Error fetching data.'); // Set the error message here
+        setErrorMessage('Error fetching data.'); // Set the error message here
       } finally {
         setLoading(false);
       }
