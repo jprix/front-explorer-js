@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { PropTypes } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -12,16 +13,12 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 
-const Header = ({ getCatalogLink, connectAnotherAccount }) => {
+const Header = ({ getCatalogLink, connectAnotherAccount, authData }) => {
   const [dropdownValue, setDropdownValue] = useState('default');
 
   const handleDropdownChange = (event) => {
     setDropdownValue(event.target.value);
   };
-
-  const WideInputLabel = styled(InputLabel)({
-    width: '200px',
-  });
 
   return (
     <AppBar position="static">
@@ -66,7 +63,9 @@ const Header = ({ getCatalogLink, connectAnotherAccount }) => {
                   color="secondary"
                   onClick={getCatalogLink}
                 >
-                  Link Another Account
+                  {!authData || authData.length === 0
+                    ? 'Link Account'
+                    : 'Link Another Account'}
                 </Button>
               </MenuItem>
             ) : null}

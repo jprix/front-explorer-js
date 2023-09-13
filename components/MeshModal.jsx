@@ -44,6 +44,7 @@ const MeshModal = ({
   useEffect(() => {
     if (open && frontConnection) {
       frontConnection.openPopup(link);
+      //frontConnection.openLink(link)
     }
 
     return () => {
@@ -64,6 +65,7 @@ MeshModal.propTypes = {
   link: PropTypes.string.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onExit: PropTypes.func,
+  transferFinished: PropTypes.func,
 };
 
 export default MeshModal;

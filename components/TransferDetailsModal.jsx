@@ -32,6 +32,12 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   } = useContext(TransferContext);
 
   const lastBrokerTypeRef = useRef('');
+  console.log(
+    'lastBrokerTypeRef',
+    lastBrokerTypeRef,
+    'broker type',
+    brokerType
+  );
 
   useEffect(() => {
     const millisecondsInADay = 24 * 60 * 60 * 1000;
@@ -50,7 +56,12 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
     };
 
     const fetchTransfers = async () => {
-      console.log(brokerType, !transferDetails, transferDetails.length === 0);
+      console.log(
+        'lastBrokerTypeRef.current',
+        lastBrokerTypeRef.current,
+        'brokerType',
+        brokerType
+      );
       try {
         if (
           !transferDetails ||
@@ -58,7 +69,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
           lastBrokerTypeRef.current !== brokerType
         ) {
           setLoadingTransfers(true);
-          await getTransferDetails(payload); // Added await here
+          await getTransferDetails(payload);
           lastBrokerTypeRef.current = brokerType;
         }
       } catch (error) {
@@ -69,7 +80,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
     };
 
     fetchTransfers();
-  }, []);
+  }, [brokerType]);
 
   const handleOpen = () => {
     setOpenDetails(true);

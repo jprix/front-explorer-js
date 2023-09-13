@@ -19,7 +19,7 @@ const PayPage = () => {
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true); // Add loading state
   const [errorMessage, setErrorMessage] = useState(''); // Use to store messages like "No records found" or "Error fetching data"
-
+  const { CLIENT_ID } = process.env;
   const router = useRouter();
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const PayPage = () => {
   const getCatalogLink = async () => {
     try {
       const link = await fetch(
-        `/api/catalog?Userid=1234567&EnableTransfers=true`,
+        `/api/catalog?Userid=${CLIENT_ID}&EnableTransfers=true`,
         {
           method: 'POST',
           headers: {

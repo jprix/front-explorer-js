@@ -144,7 +144,9 @@ const ProviderDetails = ({
               )}
 
               <PortfolioHoldings
+                brokerType={data?.accessToken?.brokerType}
                 userId={data?.accessToken?.accountTokens[0]?.account?.accountId}
+                linkedAccount={data?.accessToken?.linkedAccount}
               />
               <div
                 style={{

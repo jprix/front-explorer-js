@@ -1,17 +1,18 @@
+import { getUserId } from '../../../../utils/UserId';
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
 
   if (req.method !== 'GET') {
     return res
       .status(405)
-      .json({ error: 'Method not allowed. Please use POST method.' });
+      .json({ error: 'Method not allowed. Please use GET method.' });
   }
 
-  console.log(req.body);
-
+  const { brokerType } = req.query;
+  const userId = getUserId(brokerType);
   try {
     const response = await fetch(
-      `${MESH_API_URL}/api/v1/holdings/portfolio?UserId=12345`,
+      `${MESH_API_URL}/api/v1/holdings/portfolio?UserId=${userId}`,
       {
         headers: {
           'Content-Type': 'application/json',

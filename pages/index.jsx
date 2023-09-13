@@ -33,7 +33,6 @@ const HomePage = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({}),
     });
     const response = await link.json();
     if (response) {
@@ -43,7 +42,8 @@ const HomePage = () => {
   };
 
   const handleSuccess = (newAuthData) => {
-    console.log('Broker connected successfully:');
+    newAuthData.linkedAccount = false;
+
     const updatedAuthData = [...existingAuthData, newAuthData];
     setExistingAuthData(updatedAuthData);
     const expiryTimestamp =
@@ -78,6 +78,7 @@ const HomePage = () => {
       <Header
         connectAnotherAccount={connectAnotherAccount}
         getCatalogLink={getCatalogLink}
+        authData={existingAuthData}
       />
       <div
         style={{

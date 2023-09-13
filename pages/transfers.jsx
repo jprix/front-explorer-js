@@ -24,6 +24,7 @@ const TransferPage = () => {
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedNetworkId, setSelectedNetworkId] = useState('');
 
+  const { CLIENT_ID } = process.env;
   const router = useRouter();
   const handleTypeChange = (e) => setSelectedType(e.target.value);
   const handleTokenChange = (e) => setSelectedToken(e.target.value);
@@ -79,7 +80,7 @@ const TransferPage = () => {
   const getCatalogLink = async () => {
     try {
       const link = await fetch(
-        `/api/catalog?Userid=1234567&BrokerType=${selectedType}&EnableTransfers=true`,
+        `/api/catalog?Userid=${CLIENT_ID}&BrokerType=${selectedType}&EnableTransfers=true`,
         {
           method: 'POST',
           headers: {
@@ -122,7 +123,7 @@ const TransferPage = () => {
 
   return (
     <div>
-      <Header />
+      <Header getCatalogLink={getCatalogLink} authData={existingAuthData} />
       <h1>Embedded Deposits</h1>
 
       {!loading && networks.length ? (

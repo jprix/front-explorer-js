@@ -11,7 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@front-finance/link": "^1.1.1",
+    "@front-finance/link": "^1.1.3",
     "@mui/icons-material": "^5.14.7",
     "@mui/material": "^5.14.7",
     "autoprefixer": "10.4.15",

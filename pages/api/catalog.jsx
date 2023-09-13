@@ -1,15 +1,11 @@
+import { getUserId } from '../../utils/UserId';
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
-  const {
-    EnableTransfers,
-    amountInFiat,
-    symbol,
-    UserId,
-    CallbackUrl,
-    BrokerType,
-  } = req.query;
+  const { EnableTransfers, amountInFiat, symbol, CallbackUrl, BrokerType } =
+    req.query;
 
-  console.log('CallbackUrl', CallbackUrl);
+  const userId = getUserId(BrokerType);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -28,7 +24,7 @@ export default async function handler(req, res) {
   }
 
   // Conditionally building the URL
-  let queryString = `${MESH_API_URL}/api/v1/cataloglink?UserId=${UserId}&EnableTransfers=${EnableTransfers}`;
+  let queryString = `${MESH_API_URL}/api/v1/cataloglink?UserId=${userId}&EnableTransfers=${EnableTransfers}`;
   if (CallbackUrl) {
     queryString += `&CallbackUrl=${CallbackUrl}`;
   }
@@ -55,6 +51,7 @@ export default async function handler(req, res) {
     }
 
     const response = await getCatalogLink.json();
+
     return res.status(200).json(response);
   } catch (error) {
     console.log('Error from Mesh:', error);
