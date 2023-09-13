@@ -17,7 +17,7 @@ import {
   DialogActions,
 } from '@mui/material';
 
-const PortfolioHoldings = ({ brokerType, linkedAccount }) => {
+const PortfolioHoldings = ({ brokerType, linkedAccount, existingAuthData }) => {
   console.log('portfolio holdings brokerType', brokerType);
   const [portfolioHoldings, setPortfolioHoldings] = useState([]);
   const [openPortfolioModal, setOpenPortfolioModal] = useState(false);
@@ -48,6 +48,22 @@ const PortfolioHoldings = ({ brokerType, linkedAccount }) => {
     fetchPortfolioHoldings();
   }, []);
 
+  useEffect(() => {
+    console.log('current link ', linkedAccount);
+    if (!linkedAccount) {
+      console.log('attempting to link your account');
+
+      // Create a copy of the prop data
+      let updatedData = [...existingAuthData];
+
+      // Safety check and modify the copied data
+      if (updatedData && updatedData.length > 0 && updatedData[0].accessToken) {
+        updatedData[0].linkedAccount = true;
+        localStorage.setItem('authData', JSON.stringify(updatedData));
+      }
+    }
+  }, []);
+
   const handleOpen = () => {
     setOpenPortfolioModal(true);
   };
@@ -75,13 +91,18 @@ const PortfolioHoldings = ({ brokerType, linkedAccount }) => {
           maxWidth="md"
         >
           <DialogTitle id="portfolio-details-dialog-title">
-            Portfolio Details: ${portfolioValue}
+            {linkedAccount
+              ? `Portfolio Details: ${portfolioValue}`
+              : 'Linking your account...'}
           </DialogTitle>
+
           {!linkedAccount ? (
-            <p>Please wait while we link your account</p>
+            <DialogContent>
+              <CircularProgress />
+            </DialogContent>
           ) : (
             <DialogContent>
-              {loadingPortfolioHoldings ? (
+              {!loadingPortfolioHoldings ? (
                 <CircularProgress />
               ) : portfolioHoldings?.length > 0 ? (
                 <TableContainer

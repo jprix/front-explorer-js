@@ -147,6 +147,7 @@ const ProviderDetails = ({
                 brokerType={data?.accessToken?.brokerType}
                 userId={data?.accessToken?.accountTokens[0]?.account?.accountId}
                 linkedAccount={data?.accessToken?.linkedAccount}
+                existingAuthData={existingAuthData}
               />
               <div
                 style={{
