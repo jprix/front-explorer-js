@@ -17,54 +17,90 @@ import {
   DialogActions,
 } from '@mui/material';
 
-const PortfolioHoldings = ({ brokerType, linkedAccount, existingAuthData }) => {
-  console.log('portfolio holdings brokerType', brokerType);
+const PortfolioHoldings = ({ brokerType, existingAuthData }) => {
   const [portfolioHoldings, setPortfolioHoldings] = useState([]);
   const [openPortfolioModal, setOpenPortfolioModal] = useState(false);
   const [portfolioValue, setPortfolioValue] = useState(0); // Add state variable to store portfolio value
   const [loadingPortfolioHoldings, setLoadingPortfolioHoldings] =
     useState(true);
+  const [linkedAccount, setLinkedAccount] = useState(false);
+
+  const fetchPortfolioHoldings = async () => {
+    try {
+      setLoadingPortfolioHoldings(true); // Set loading to true at the start
+      const response = await fetch(
+        `/api/holdings/portfolio?brokerType=${brokerType}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setPortfolioValue(data.content.cryptocurrenciesValue.toFixed(2)); // Set portfolio value
+        setPortfolioHoldings(data.content.cryptocurrencyPositions);
+      } else {
+        console.error('Failed to fetch portfolio holdings');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    } finally {
+      setLoadingPortfolioHoldings(false); // Set loading to false once data has been fetched or an error has occurred
+    }
+  };
+
   useEffect(() => {
-    const fetchPortfolioHoldings = async () => {
-      try {
-        const response = await fetch(
-          `/api/holdings/portfolio?brokerType=${brokerType}`
+    const selectedAuthData = existingAuthData.find(
+      (authData) => authData.accessToken.brokerType === brokerType
+    );
+    if (selectedAuthData) {
+      setLinkedAccount(selectedAuthData.linkedAccount);
+    }
+  }, [brokerType]);
+
+  const linkAccount = async (selectedAuthData) => {
+    try {
+      const executeAccountLink = await fetch(
+        `/api/holdings/portfolio/get?brokerType=${brokerType}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            AuthToken:
+              selectedAuthData.accessToken.accountTokens[0].accessToken,
+          },
+        }
+      );
+
+      if (!executeAccountLink.ok) {
+        throw new Error(
+          `Failed to Link account: ${executeAccountLink.statusText}`
+        );
+      }
+
+      if (executeAccountLink.ok) {
+        selectedAuthData.linkedAccount = true;
+
+        // Update the existingAuthData array
+        const updatedAuthData = existingAuthData.map((authData) =>
+          authData.accessToken.brokerType === brokerType
+            ? selectedAuthData
+            : authData
         );
 
-        if (response.ok) {
-          const data = await response.json();
-          setPortfolioValue(data.content.cryptocurrenciesValue.toFixed(2)); // Set portfolio value
-          setPortfolioHoldings(data.content.cryptocurrencyPositions);
-        } else {
-          console.error('Failed to fetch portfolio holdings');
-        }
-      } catch (error) {
-        console.error('An error occurred:', error);
-      } finally {
-        setLoadingPortfolioHoldings(false); // Set loading to false once data has been fetched or an error has occurred
+        localStorage.setItem('authData', JSON.stringify(updatedAuthData));
+        setLinkedAccount(true);
       }
-    };
-
-    fetchPortfolioHoldings();
-  }, []);
-
-  useEffect(() => {
-    console.log('current link ', linkedAccount);
-    if (!linkedAccount) {
-      console.log('attempting to link your account');
-
-      // Create a copy of the prop data
-      let updatedData = [...existingAuthData];
-
-      // Safety check and modify the copied data
-      if (updatedData && updatedData.length > 0 && updatedData[0].accessToken) {
-        updatedData[0].linkedAccount = true;
-        localStorage.setItem('authData', JSON.stringify(updatedData));
-      }
+    } catch (error) {
+      console.log('this was the error from Mesh', error);
     }
-  }, []);
+  };
 
   const handleOpen = () => {
+    const selectedAuthData = existingAuthData.find(
+      (authData) => authData.accessToken.brokerType === brokerType
+    );
+    if (selectedAuthData && !linkedAccount) {
+      linkAccount(selectedAuthData); // Call the linkAccount function when the button is clicked
+    }
+    fetchPortfolioHoldings();
     setOpenPortfolioModal(true);
   };
 
@@ -102,7 +138,7 @@ const PortfolioHoldings = ({ brokerType, linkedAccount, existingAuthData }) => {
             </DialogContent>
           ) : (
             <DialogContent>
-              {!loadingPortfolioHoldings ? (
+              {loadingPortfolioHoldings ? (
                 <CircularProgress />
               ) : portfolioHoldings?.length > 0 ? (
                 <TableContainer

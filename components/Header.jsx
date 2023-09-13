@@ -50,6 +50,8 @@ const Header = ({ getCatalogLink, connectAnotherAccount, authData }) => {
               dropdownValue === 'default' ? 'Demos' : 'Demos'
             }
           >
+            <MenuItem value="default">Select a demo</MenuItem>
+
             <MenuItem value="pay-page">
               <Link href="/pay">Pay</Link>
             </MenuItem>

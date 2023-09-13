@@ -1,31 +1,34 @@
-import { getUserId } from '../../../../utils/UserId';
+import { getUserId } from '../../../../../utils/UserId';
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
 
-  if (req.method !== 'GET') {
+  if (req.method !== 'POST') {
     return res
       .status(405)
-      .json({ error: 'Method not allowed. Please use GET method.' });
+      .json({ error: 'Method not allowed. Please use POST method.' });
   }
 
+  const authToken = req.headers['authtoken'];
   const { brokerType } = req.query;
-  console.log('outbound brokerType', brokerType);
-
   const userId = getUserId(brokerType);
-  console.log('userId', userId);
+
+  const payload = {
+    AuthToken: authToken,
+    Type: brokerType,
+  };
+
+  console.log('outbound payload', payload, userId);
   try {
-    const response = await fetch(
-      `${MESH_API_URL}/api/v1/holdings/portfolio?UserId=${userId}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Client-Id': CLIENT_ID,
-          'X-Client-Secret': PROD_API_KEY,
-        },
-        method: 'GET',
-      }
-    );
-    console.log('response from mesh', response.status);
+    const response = await fetch(`${MESH_API_URL}/api/v1/holdings/get`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Client-Id': CLIENT_ID,
+        'X-Client-Secret': PROD_API_KEY,
+      },
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    console.log('response from mesh', response);
     if (!response.ok) {
       const responseBody = await response.json();
       const errorMessage = `Failed to fetch Portfolio Holdings. Status: ${response.status} - ${response.statusText}. Message: ${response.message}`;

@@ -72,7 +72,7 @@ const ProviderDetails = ({
         (data) => data !== authData
       );
       setExistingAuthData(updatedAuthData);
-      localStorage.setItem('authData', JSON.stringify(updatedAuthData));
+      localStorage.setItem('authData', JSON.stringify(updatedAuthData[0]));
     } catch (error) {
       console.log('this was the error from Mesh', error);
     }
@@ -88,7 +88,6 @@ const ProviderDetails = ({
     setOpenTransferModal(true);
   };
 
-  console.log('does it re render?');
   return (
     <Grid container spacing={3}>
       {existingAuthData?.map((data, index) => (
@@ -146,7 +145,6 @@ const ProviderDetails = ({
               <PortfolioHoldings
                 brokerType={data?.accessToken?.brokerType}
                 userId={data?.accessToken?.accountTokens[0]?.account?.accountId}
-                linkedAccount={data?.accessToken?.linkedAccount}
                 existingAuthData={existingAuthData}
               />
               <div
