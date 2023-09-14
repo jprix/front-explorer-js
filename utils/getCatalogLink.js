@@ -1,22 +1,32 @@
 import { getUserId } from '../utils/UserId';
+
 export const getCatalogLink = async (
-  selectedType,
-  setCatalogLink,
-  setOpenMeshModal,
-  setErrorMessage,
-  payload
+  selectedType = null,
+  setCatalogLink = () => {},
+  setOpenMeshModal = () => {},
+  setErrorMessage = () => {},
+  payload = null
 ) => {
+  if (!selectedType) {
+    console.warn('selectedType was not provided to getCatalogLink');
+    return;
+  }
+
   const UserId = getUserId(selectedType);
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  if (payload) {
+    fetchOptions.body = JSON.stringify(payload);
+  }
+
   try {
     const link = await fetch(
       `/api/catalog?Userid=${UserId}&BrokerType=${selectedType}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      }
+      fetchOptions
     );
 
     const response = await link.json();

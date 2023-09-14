@@ -160,7 +160,7 @@ const ProviderDetails = ({
                 style={{ marginTop: '10px', padding: '10px' }}
               >
                 <Typography
-                  variant="h8"
+                  variant="h6"
                   component="div"
                   style={{ marginBottom: '10px' }}
                 >
@@ -201,7 +201,7 @@ const ProviderDetails = ({
                 style={{ marginTop: '10px', padding: '10px' }}
               >
                 <Typography
-                  variant="h7"
+                  variant="h6"
                   component="div"
                   style={{ marginBottom: '10px' }}
                 >
