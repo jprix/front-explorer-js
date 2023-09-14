@@ -118,7 +118,8 @@ const PayPage = () => {
         <ChooseProvider
           variant="contained"
           color="secondary"
-          getCatalogLink={getCatalogLink}
+          brokerType={brokerType}
+          //getCatalogLink={getCatalogLink}
           setBrokerType={setBrokerType}
         />
       ) : !loading && networks.length ? (

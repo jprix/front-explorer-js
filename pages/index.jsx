@@ -5,8 +5,7 @@ import NetworkDashboard from '../components/NetworksDashboard';
 import MeshModal from '../components/MeshModal';
 import Header from '../components/Header';
 import ChooseProvider from 'components/ChooseProvider';
-import { getUserId } from 'utils/UserId';
-
+import { getCatalogLink } from 'utils/getCatalogLink';
 const HomePage = () => {
   const [existingAuthData, setExistingAuthData] = useState([]);
   const [catalogLink, setCatalogLink] = useState('');
@@ -14,6 +13,7 @@ const HomePage = () => {
   const [openMeshModal, setOpenMeshModal] = useState(false);
   const [brokerType, setBrokerType] = useState('');
   const [linkAnother, setLinkAnother] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const authData = localStorage.getItem('authData');
@@ -30,25 +30,7 @@ const HomePage = () => {
     localStorage.setItem('authData', JSON.stringify(existingAuthData));
   }, [existingAuthData]);
 
-  const getCatalogLink = async () => {
-    const UserId = getUserId(brokerType);
-    console.log('UserId for catalog link', UserId, 'brokerType', brokerType);
-    const link = await fetch(
-      `/api/catalog?UserId=${UserId}&BrokerType=${brokerType}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    const response = await link.json();
-    if (response) {
-      setCatalogLink(response.content.linkToken);
-      setOpenMeshModal(true);
-    }
-  };
-
+  console.log('error message', errorMessage);
   const handleSuccess = (newAuthData) => {
     newAuthData.linkedAccount = false;
 
@@ -78,7 +60,6 @@ const HomePage = () => {
     <div>
       <Header
         connectAnotherAccount={connectAnotherAccount}
-        getCatalogLink={getCatalogLink}
         setLinkAnother={setLinkAnother}
         authData={existingAuthData}
       />
@@ -95,8 +76,11 @@ const HomePage = () => {
           <ChooseProvider
             variant="contained"
             color="secondary"
+            brokerType={brokerType}
             getCatalogLink={getCatalogLink}
+            setCatalogLink={setCatalogLink}
             setBrokerType={setBrokerType}
+            setOpenMeshModal={setOpenMeshModal}
           />
         ) : null}
       </div>

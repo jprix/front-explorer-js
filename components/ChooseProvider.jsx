@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getCatalogLink } from 'utils/getCatalogLink';
 
 import {
   Button,
@@ -8,7 +9,12 @@ import {
   MenuItem,
 } from '@mui/material';
 
-const ChooseProvider = ({ getCatalogLink, setBrokerType, brokerType }) => {
+const ChooseProvider = ({
+  setCatalogLink,
+  brokerType,
+  setOpenMeshModal,
+  setBrokerType,
+}) => {
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
@@ -62,7 +68,14 @@ const ChooseProvider = ({ getCatalogLink, setBrokerType, brokerType }) => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => getCatalogLink()}
+            onClick={() =>
+              getCatalogLink(
+                brokerType,
+                setCatalogLink,
+                setOpenMeshModal,
+                setErrorMessage
+              )
+            }
           >
             Connect to Mesh
           </Button>
