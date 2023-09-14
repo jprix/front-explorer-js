@@ -30,7 +30,7 @@ const PortfolioHoldings = ({ brokerType, existingAuthData }) => {
 
   const fetchPortfolioHoldings = async () => {
     try {
-      setLoadingPortfolioHoldings(true); // Set loading to true at the start
+      setLoadingPortfolioHoldings(true);
       const response = await fetch(
         `/api/holdings/portfolio?brokerType=${brokerType}&userId=${userId}`
       );

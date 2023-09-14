@@ -59,6 +59,7 @@ const HomePage = () => {
     newAuthData.accessToken.expiryTimestamp = expiryTimestamp;
 
     localStorage.setItem('authData', JSON.stringify(updatedAuthData));
+    setLinkAnother(false);
   };
 
   const handleExit = (error) => {

@@ -1,15 +1,17 @@
+const userId = process.env.NEXT_PUBLIC_USER_ID;
+
 export const getUserId = (brokerType) => {
   switch (brokerType) {
     case 'coinbase':
-      return 'coin15566779';
+      return `coin${userId}`;
     case 'deFiWallet':
-      return 'defi666779';
+      return `defi${userId}`;
     case 'robinhood':
-      return 'robin4436779';
+      return `robin${userId}`;
     case 'binance':
-      return 'binance666779';
+      return `binance${userId}`;
     case 'alpaca':
-      return 'alpaca666778';
+      return `alpaca${userId}`;
     default:
       return '000000007';
   }
