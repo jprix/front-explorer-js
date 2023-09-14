@@ -1,5 +1,13 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Grid,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import TransferDetailsModal from './TransferDetailsModal';
 import TransferModal from './TransferModal';
 import PortfolioHoldings from './PortfolioHoldings';
@@ -15,7 +23,7 @@ const ProviderDetails = ({
   const [openTransferDetailsModal, setOpenTransferDetailsModal] =
     useState(false);
   const [selectedData, setSelectedData] = useState(null);
-
+  const [portfolioValue, setPortfolioValue] = useState({});
   const updateCountdown = useCallback(() => {
     let newCountdowns = {};
 
@@ -33,12 +41,51 @@ const ProviderDetails = ({
     setCountdowns(newCountdowns);
   }, [existingAuthData]);
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
   useEffect(() => {
     const timer = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(timer);
   }, [updateCountdown]);
 
+  useEffect(() => {
+    existingAuthData.forEach((data) => {
+      fetchPortfolioValue(data);
+    });
+    console.log('portfolio value', portfolioValue);
+  }, []);
+
+  const fetchPortfolioValue = async (data) => {
+    try {
+      const executePortfolioValue = await fetch(
+        `/api/holdings/portfolio/value?brokerType=${data?.accessToken?.brokerType}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            AuthToken: data.accessToken.accountTokens[0].accessToken,
+          },
+        }
+      );
+
+      if (!executePortfolioValue.ok) {
+        throw new Error(
+          `Failed to Link account: ${executePortfolioValue.statusText}`
+        );
+      }
+
+      if (executePortfolioValue.ok) {
+        const response = await executePortfolioValue.json();
+        setPortfolioValue((prevValues) => ({
+          ...prevValues,
+          [data?.accessToken?.brokerName]: response.content,
+        }));
+      }
+    } catch (error) {
+      console.log('this was the error from Mesh', error);
+    }
+  };
   const handleTransferDetails = useCallback((data) => {
     console.log('getting transfer details', data);
     setSelectedData(data); // Set the selected data
@@ -88,6 +135,13 @@ const ProviderDetails = ({
     setOpenTransferModal(true);
   };
 
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <Grid container spacing={3}>
       {existingAuthData?.map((data, index) => (
@@ -97,28 +151,135 @@ const ProviderDetails = ({
               <Typography variant="h6" component="div">
                 Connected Broker: {data?.accessToken?.brokerName}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Broker Type: {data?.accessToken?.brokerType}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Auth token expires in:
-                {typeof countdowns[data?.accessToken?.brokerName] === 'number'
-                  ? `${Math.round(
-                      countdowns[data?.accessToken?.brokerName] || 0
-                    )} seconds`
-                  : countdowns[data?.accessToken?.brokerName]}
-              </Typography>
+              <Card
+                variant="outlined"
+                style={{ marginTop: '10px', padding: '10px' }}
+              >
+                <Typography
+                  variant="h8"
+                  component="div"
+                  style={{ marginBottom: '10px' }}
+                >
+                  Auth Data
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Auth token expires in:
+                  {typeof countdowns[data?.accessToken?.brokerName] === 'number'
+                    ? `${Math.round(
+                        countdowns[data?.accessToken?.brokerName] || 0
+                      )} seconds`
+                    : countdowns[data?.accessToken?.brokerName]}
+                </Typography>
 
-              <Typography variant="body2" color="text.secondary">
-                Account Name:{' '}
-                {data?.accessToken?.accountTokens[0].account.accountName}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Fund: {data?.accessToken?.accountTokens[0]?.account?.fund}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Cash: {data?.accessToken?.accountTokens[0]?.account?.cash}
-              </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Account Name:{' '}
+                  {data?.accessToken?.accountTokens[0].account.accountName}
+                </Typography>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginTop: '10px',
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    onClick={() => handleDisconnect(data)}
+                  >
+                    Disconnect
+                  </Button>
+                </div>
+              </Card>
+              <Card
+                variant="outlined"
+                style={{ marginTop: '10px', padding: '10px' }}
+              >
+                <Typography
+                  variant="h7"
+                  component="div"
+                  style={{ marginBottom: '10px' }}
+                >
+                  Portfolio Information
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Total Value:
+                  <span style={{ marginLeft: '5px' }}>
+                    {portfolioValue[
+                      data?.accessToken?.brokerName
+                    ]?.totalValue.toFixed(2)}
+                  </span>
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  style={{ marginTop: '5px' }}
+                >
+                  Total Performance:
+                  <span style={{ marginLeft: '5px' }}>
+                    {portfolioValue[
+                      data?.accessToken?.brokerName
+                    ]?.totalPerformance.toFixed(2)}
+                  </span>
+                </Typography>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginTop: '10px',
+                  }}
+                >
+                  <PortfolioHoldings
+                    brokerType={data?.accessToken?.brokerType}
+                    userId={
+                      data?.accessToken?.accountTokens[0]?.account?.accountId
+                    }
+                    existingAuthData={existingAuthData}
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{ marginTop: '20px', marginLeft: '10px' }}
+                    size="small"
+                    onClick={handleMenuClick}
+                  >
+                    Actions
+                  </Button>
+                  <Menu
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        handleReceive(data);
+                        handleMenuClose();
+                      }}
+                    >
+                      Receive / Deposit
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleDeposit(data);
+                        handleMenuClose();
+                      }}
+                    >
+                      Send / Withdraw
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleTransferDetails(data);
+                        handleMenuClose();
+                      }}
+                    >
+                      Transfer History
+                    </MenuItem>
+                  </Menu>
+                </div>
+              </Card>
+
               {openTransferModal && (
                 <TransferModal
                   open={openTransferModal}
@@ -141,57 +302,6 @@ const ProviderDetails = ({
                   }
                 />
               )}
-
-              <PortfolioHoldings
-                brokerType={data?.accessToken?.brokerType}
-                userId={data?.accessToken?.accountTokens[0]?.account?.accountId}
-                existingAuthData={existingAuthData}
-              />
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  marginTop: '10px',
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  style={{ marginRight: '10px' }}
-                  onClick={() => handleDeposit(data)}
-                  disabled={existingAuthData.length < 2}
-                >
-                  Send / Withdraw
-                </Button>
-                <Button
-                  variant="contained"
-                  color="tertiary"
-                  size="small"
-                  style={{ marginRight: '10px', color: 'white' }}
-                  onClick={() => handleReceive(data)}
-                  disabled={existingAuthData.length < 2}
-                >
-                  Receive / Deposit
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ marginRight: '10px', color: 'white' }}
-                  size="small"
-                  onClick={() => handleTransferDetails(data)}
-                >
-                  Transfer History
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  onClick={() => handleDisconnect(data)}
-                >
-                  Disconnect
-                </Button>
-              </div>
             </CardContent>
           </Card>
         </Grid>

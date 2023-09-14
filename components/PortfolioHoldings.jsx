@@ -115,7 +115,7 @@ const PortfolioHoldings = ({ brokerType, existingAuthData }) => {
     <>
       <Button
         variant="contained"
-        color="secondary"
+        color="tertiary"
         style={{ marginTop: '20px' }}
         size="small"
         onClick={handleOpen}
