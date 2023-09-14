@@ -24,6 +24,8 @@ const ProviderDetails = ({
     useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [portfolioValue, setPortfolioValue] = useState({});
+  const [currentDataItem, setCurrentDataItem] = useState(null);
+
   const updateCountdown = useCallback(() => {
     let newCountdowns = {};
 
@@ -135,7 +137,9 @@ const ProviderDetails = ({
     setOpenTransferModal(true);
   };
 
-  const handleMenuClick = (event) => {
+  const handleMenuClick = (data, event) => {
+    console.log('event', event, 'data', data);
+    setCurrentDataItem(data);
     setAnchorEl(event.currentTarget);
   };
 
@@ -242,7 +246,7 @@ const ProviderDetails = ({
                     color="primary"
                     style={{ marginTop: '20px', marginLeft: '10px' }}
                     size="small"
-                    onClick={handleMenuClick}
+                    onClick={(event) => handleMenuClick(data, event)}
                   >
                     Actions
                   </Button>
@@ -262,7 +266,7 @@ const ProviderDetails = ({
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
-                        handleDeposit(data);
+                        handleDeposit(currentDataItem);
                         handleMenuClose();
                       }}
                     >
@@ -270,7 +274,7 @@ const ProviderDetails = ({
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
-                        handleTransferDetails(data);
+                        handleTransferDetails(currentDataItem);
                         handleMenuClose();
                       }}
                     >
