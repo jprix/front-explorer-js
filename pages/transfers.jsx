@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MeshModal from '../components/MeshModal';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
+import { getCatalogLink } from 'utils/getCatalogLink';
 
 import {
   Button,
@@ -79,30 +80,6 @@ const TransferPage = () => {
     },
   };
 
-  const getCatalogLink = async () => {
-    try {
-      const link = await fetch(
-        `/api/catalog?Userid=${CLIENT_ID}&BrokerType=${selectedType}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      const response = await link.json();
-      if (response) {
-        setCatalogLink(response.content.linkToken);
-        setOpenMeshModal(true);
-      }
-    } catch (error) {
-      console.log('Error from Mesh:', error);
-      setErrorMessage(`Something went wrong: ${error.message}`);
-    }
-  };
-
   const handleCloseMeshModal = () => {
     setOpenMeshModal(false);
   };
@@ -176,7 +153,19 @@ const TransferPage = () => {
             </FormControl>
           )}
 
-          <Button onClick={getCatalogLink} variant="contained" color="primary">
+          <Button
+            onClick={() =>
+              getCatalogLink(
+                selectedType,
+                setCatalogLink,
+                setOpenMeshModal,
+                setErrorMessage,
+                payload
+              )
+            }
+            variant="contained"
+            color="primary"
+          >
             Submit
           </Button>
         </form>

@@ -3,8 +3,7 @@ import MeshModal from '../components/MeshModal';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
 import ChooseProvider from 'components/ChooseProvider';
-import { getUserId } from 'utils/UserId';
-
+import { getCatalogLink } from 'utils/getCatalogLink';
 import {
   Button,
   Card,
@@ -72,31 +71,6 @@ const PayPage = () => {
       ],
       amountInFiat: 10,
     },
-  };
-
-  const getCatalogLink = async () => {
-    const UserId = getUserId(brokerType);
-    try {
-      const link = await fetch(
-        `/api/catalog?UserId=${UserId}&BrokerType=${brokerType}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      const response = await link.json();
-      if (response) {
-        setCatalogLink(response.content.linkToken);
-        setOpenMeshModal(true);
-      }
-    } catch (error) {
-      console.log('Error from Mesh:', error);
-      setErrorMessage(`Something went wrong: ${error.message}`);
-    }
   };
 
   const handleCloseMeshModal = () => {
@@ -201,7 +175,15 @@ const PayPage = () => {
             }}
           >
             <Button
-              onClick={getCatalogLink}
+              onClick={() =>
+                getCatalogLink(
+                  brokerType,
+                  setCatalogLink,
+                  setOpenMeshModal,
+                  setErrorMessage,
+                  payload
+                )
+              }
               variant="contained"
               color="primary"
             >
