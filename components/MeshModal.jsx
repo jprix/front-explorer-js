@@ -43,8 +43,8 @@ const MeshModal = ({
 
   useEffect(() => {
     if (open && frontConnection) {
-      frontConnection.openPopup(link);
-      //frontConnection.openLink(link)
+      //frontConnection.openPopup(link);
+      frontConnection.openLink(link);
     }
 
     return () => {

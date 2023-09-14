@@ -68,19 +68,21 @@ const TransferPage = () => {
   }, [existingAuthData]);
 
   const payload = {
-    toAddresses: [
-      {
-        symbol: selectedToken, // symbol to transfer
-        address: '0xcC90c7c3E3Ad6e4E6bd8CF4fB10D09edC20a9506', // address to transfer
-        networkId: selectedNetworkId, // network id from /api/v1/transfers/managed/networks request
-      },
-    ],
+    transferOptions: {
+      toAddresses: [
+        {
+          symbol: selectedToken, // symbol to transfer
+          address: '0xcC90c7c3E3Ad6e4E6bd8CF4fB10D09edC20a9506', // address to transfer
+          networkId: selectedNetworkId, // network id from /api/v1/transfers/managed/networks request
+        },
+      ],
+    },
   };
 
   const getCatalogLink = async () => {
     try {
       const link = await fetch(
-        `/api/catalog?Userid=${CLIENT_ID}&BrokerType=${selectedType}&EnableTransfers=true`,
+        `/api/catalog?Userid=${CLIENT_ID}&BrokerType=${selectedType}`,
         {
           method: 'POST',
           headers: {
@@ -92,7 +94,7 @@ const TransferPage = () => {
 
       const response = await link.json();
       if (response) {
-        setCatalogLink(response.content.iFrameUrl);
+        setCatalogLink(response.content.linkToken);
         setOpenMeshModal(true);
       }
     } catch (error) {

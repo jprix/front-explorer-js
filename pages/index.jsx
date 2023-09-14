@@ -34,7 +34,7 @@ const HomePage = () => {
     const UserId = getUserId(brokerType);
     console.log('UserId for catalog link', UserId, 'brokerType', brokerType);
     const link = await fetch(
-      `/api/catalog?UserId=${UserId}&EnableTransfers=false&BrokerType=${brokerType}`,
+      `/api/catalog?UserId=${UserId}&BrokerType=${brokerType}`,
       {
         method: 'POST',
         headers: {
@@ -44,7 +44,7 @@ const HomePage = () => {
     );
     const response = await link.json();
     if (response) {
-      setCatalogLink(response.content.iFrameUrl);
+      setCatalogLink(response.content.linkToken);
       setOpenMeshModal(true);
     }
   };

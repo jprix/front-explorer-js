@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import MeshModal from '../components/MeshModal';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
+import ChooseProvider from 'components/ChooseProvider';
+import { getUserId } from 'utils/UserId';
 
 import {
   Button,
@@ -19,7 +21,7 @@ const PayPage = () => {
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true); // Add loading state
   const [errorMessage, setErrorMessage] = useState(''); // Use to store messages like "No records found" or "Error fetching data"
-  const { CLIENT_ID } = process.env;
+  const [brokerType, setBrokerType] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -60,20 +62,23 @@ const PayPage = () => {
   }, [existingAuthData]);
 
   const payload = {
-    amountInFiat: 10,
-    toAddresses: [
-      {
-        symbol: 'USDC', // symbol to transfer
-        address: '0xcC90c7c3E3Ad6e4E6bd8CF4fB10D09edC20a9506', // address to transfer
-        networkId: 'e3c7fdd8-b1fc-4e51-85ae-bb276e075611', // polygon network id
-      },
-    ],
+    transferOptions: {
+      toAddresses: [
+        {
+          symbol: 'USDC',
+          address: '0xcC90c7c3E3Ad6e4E6bd8CF4fB10D09edC20a9506', // address to transfer
+          networkId: 'e3c7fdd8-b1fc-4e51-85ae-bb276e075611', // polygon network id
+        },
+      ],
+      amountInFiat: 10,
+    },
   };
 
   const getCatalogLink = async () => {
+    const UserId = getUserId(brokerType);
     try {
       const link = await fetch(
-        `/api/catalog?Userid=${CLIENT_ID}&EnableTransfers=true`,
+        `/api/catalog?UserId=${UserId}&BrokerType=${brokerType}`,
         {
           method: 'POST',
           headers: {
@@ -85,7 +90,7 @@ const PayPage = () => {
 
       const response = await link.json();
       if (response) {
-        setCatalogLink(response.content.iFrameUrl);
+        setCatalogLink(response.content.linkToken);
         setOpenMeshModal(true);
       }
     } catch (error) {
@@ -135,8 +140,14 @@ const PayPage = () => {
       <Header />
 
       <h1>Pay</h1>
-
-      {!loading && networks.length ? (
+      {!brokerType ? (
+        <ChooseProvider
+          variant="contained"
+          color="secondary"
+          getCatalogLink={getCatalogLink}
+          setBrokerType={setBrokerType}
+        />
+      ) : !loading && networks.length ? (
         <form>
           <Card>
             <CardHeader title="Product Details" />
