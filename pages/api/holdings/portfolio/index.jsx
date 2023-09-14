@@ -1,4 +1,3 @@
-import { getUserId } from '../../../../utils/UserId';
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
 
@@ -8,13 +7,13 @@ export default async function handler(req, res) {
       .json({ error: 'Method not allowed. Please use GET method.' });
   }
 
-  const { brokerType } = req.query;
+  const { brokerType, userId } = req.query;
   console.log('outbound brokerType', brokerType);
 
-  const userId = getUserId(brokerType);
-  console.log('userId', userId);
+  console.log('outbound userId', userId);
   try {
     const response = await fetch(
+      //portfolio?UserId=coin766779
       `${MESH_API_URL}/api/v1/holdings/portfolio?UserId=${userId}`,
       {
         headers: {

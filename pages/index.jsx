@@ -4,13 +4,16 @@ import ProviderDetails from '../components/ProviderDetails';
 import NetworkDashboard from '../components/NetworksDashboard';
 import MeshModal from '../components/MeshModal';
 import Header from '../components/Header';
+import ChooseProvider from 'components/ChooseProvider';
+import { getUserId } from 'utils/UserId';
 
 const HomePage = () => {
   const [existingAuthData, setExistingAuthData] = useState([]);
   const [catalogLink, setCatalogLink] = useState('');
   const [connectAnotherAccount, setConnectAnotherAccount] = useState(false);
-
   const [openMeshModal, setOpenMeshModal] = useState(false);
+  const [brokerType, setBrokerType] = useState('');
+  const [linkAnother, setLinkAnother] = useState(false);
 
   useEffect(() => {
     const authData = localStorage.getItem('authData');
@@ -28,12 +31,17 @@ const HomePage = () => {
   }, [existingAuthData]);
 
   const getCatalogLink = async () => {
-    const link = await fetch(`/api/catalog?&EnableTransfers=false`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const UserId = getUserId(brokerType);
+    console.log('UserId for catalog link', UserId, 'brokerType', brokerType);
+    const link = await fetch(
+      `/api/catalog?UserId=${UserId}&EnableTransfers=false&BrokerType=${brokerType}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     const response = await link.json();
     if (response) {
       setCatalogLink(response.content.iFrameUrl);
@@ -50,13 +58,6 @@ const HomePage = () => {
       new Date().getTime() + newAuthData.accessToken.expiresInSeconds * 1000;
     newAuthData.accessToken.expiryTimestamp = expiryTimestamp;
 
-    const maxExpiresInSeconds = Math.max(
-      ...updatedAuthData.map((obj) => obj.accessToken.expiresInSeconds)
-    );
-    const inOneHour = new Date(
-      new Date().getTime() + maxExpiresInSeconds * 1000
-    );
-
     localStorage.setItem('authData', JSON.stringify(updatedAuthData));
   };
 
@@ -72,12 +73,12 @@ const HomePage = () => {
     setOpenMeshModal(false);
   };
 
-  console.log('homepage');
   return (
     <div>
       <Header
         connectAnotherAccount={connectAnotherAccount}
         getCatalogLink={getCatalogLink}
+        setLinkAnother={setLinkAnother}
         authData={existingAuthData}
       />
       <div
@@ -87,19 +88,21 @@ const HomePage = () => {
           paddingTop: '10px',
         }}
       >
-        {existingAuthData === undefined || existingAuthData.length === 0 ? (
-          <Button
+        {existingAuthData === undefined ||
+        existingAuthData.length === 0 ||
+        linkAnother ? (
+          <ChooseProvider
             variant="contained"
             color="secondary"
-            onClick={getCatalogLink}
-          >
-            Connect to Mesh
-          </Button>
+            getCatalogLink={getCatalogLink}
+            setBrokerType={setBrokerType}
+          />
         ) : null}
       </div>
       {openMeshModal && (
         <MeshModal
           open={openMeshModal}
+          setOpenMeshModal={setOpenMeshModal}
           onClose={handleCloseMeshModal}
           link={catalogLink}
           onSuccess={handleSuccess}
@@ -114,6 +117,7 @@ const HomePage = () => {
             setExistingAuthData={setExistingAuthData}
             openMeshModal={openMeshModal}
             setOpenMeshModal={setOpenMeshModal}
+            brokerType={brokerType}
             catalogLink={catalogLink}
           />
           <Grid item xs={12}>

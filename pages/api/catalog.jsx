@@ -6,6 +6,8 @@ export default async function handler(req, res) {
 
   const userId = getUserId(BrokerType);
 
+  console.log('userId', userId, 'brokerType', BrokerType);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -42,6 +44,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('queryString', queryString);
     const getCatalogLink = await fetch(queryString, options);
 
     if (!getCatalogLink.ok) {

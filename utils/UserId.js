@@ -1,17 +1,16 @@
 export const getUserId = (brokerType) => {
-  console.log('get userId', brokerType);
   switch (brokerType) {
     case 'coinbase':
-      return 'coin666666';
+      return 'coin15566779';
     case 'deFiWallet':
-      return 'meta111111';
+      return 'defi666779';
     case 'robinhood':
-      return 'robin123456';
+      return 'robin4436779';
     case 'binance':
-      return 'binance123';
+      return 'binance666779';
     case 'alpaca':
-      return 'alpaca123';
+      return 'alpaca666778';
     default:
-      return '000000001';
+      return '000000007';
   }
 };

@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 
-const Header = ({ getCatalogLink, connectAnotherAccount, authData }) => {
+const Header = ({ setLinkAnother, connectAnotherAccount, authData }) => {
   const [dropdownValue, setDropdownValue] = useState('default');
 
   const handleDropdownChange = (event) => {
@@ -63,7 +63,7 @@ const Header = ({ getCatalogLink, connectAnotherAccount, authData }) => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={getCatalogLink}
+                  onClick={() => setLinkAnother(true)}
                 >
                   {!authData || authData.length === 0
                     ? 'Link Account'

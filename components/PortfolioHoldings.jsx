@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogActions,
 } from '@mui/material';
+import { getUserId } from '../utils/UserId';
 
 const PortfolioHoldings = ({ brokerType, existingAuthData }) => {
   const [portfolioHoldings, setPortfolioHoldings] = useState([]);
@@ -25,11 +26,13 @@ const PortfolioHoldings = ({ brokerType, existingAuthData }) => {
     useState(true);
   const [linkedAccount, setLinkedAccount] = useState(false);
 
+  const userId = getUserId(brokerType);
+
   const fetchPortfolioHoldings = async () => {
     try {
       setLoadingPortfolioHoldings(true); // Set loading to true at the start
       const response = await fetch(
-        `/api/holdings/portfolio?brokerType=${brokerType}`
+        `/api/holdings/portfolio?brokerType=${brokerType}&userId=${userId}`
       );
 
       if (response.ok) {
