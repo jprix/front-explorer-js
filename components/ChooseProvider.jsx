@@ -50,12 +50,25 @@ const ChooseProvider = ({
 
   const handleProviderType = (value) => {
     setProviderType(value);
+    setWalletType('');
   };
 
   const handleExchangeType = (value) => {
     console.log('brokerType value', value);
     setBrokerType(value);
     setWalletType('');
+  };
+
+  const handleClick = async () => {
+    await getCatalogLink(
+      brokerType,
+      setCatalogLink,
+      setOpenMeshModal,
+      setErrorMessage,
+      null,
+      providerType,
+      walletType
+    );
   };
 
   return (
@@ -112,21 +125,7 @@ const ChooseProvider = ({
             </FormControl>
           ) : null}
 
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() =>
-              getCatalogLink(
-                brokerType,
-                setCatalogLink,
-                setOpenMeshModal,
-                setErrorMessage,
-                null,
-                providerType,
-                walletType
-              )
-            }
-          >
+          <Button variant="contained" color="secondary" onClick={handleClick}>
             Connect to Mesh
           </Button>
         </form>

@@ -100,6 +100,16 @@ const TransferPage = () => {
     console.log('Broker connection closed:', error);
   };
 
+  const handleClick = async () => {
+    await getCatalogLink(
+      selectedType,
+      setCatalogLink,
+      setOpenMeshModal,
+      setErrorMessage,
+      payload
+    );
+  };
+
   return (
     <div>
       <Header getCatalogLink={getCatalogLink} authData={existingAuthData} />
@@ -153,19 +163,7 @@ const TransferPage = () => {
             </FormControl>
           )}
 
-          <Button
-            onClick={() =>
-              getCatalogLink(
-                selectedType,
-                setCatalogLink,
-                setOpenMeshModal,
-                setErrorMessage,
-                payload
-              )
-            }
-            variant="contained"
-            color="primary"
-          >
+          <Button onClick={handleClick} variant="contained" color="primary">
             Submit
           </Button>
         </form>

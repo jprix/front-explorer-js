@@ -93,6 +93,16 @@ const PayPage = () => {
     console.log('Broker connection closed:', error);
   };
 
+  const handleClick = async () => {
+    await getCatalogLink(
+      brokerType,
+      setCatalogLink,
+      setOpenMeshModal,
+      setErrorMessage,
+      payload
+    );
+  };
+
   const [product, setProduct] = useState({
     name: 'Front NFT',
     price: '10 USDC',
@@ -175,19 +185,7 @@ const PayPage = () => {
               marginTop: '16px',
             }}
           >
-            <Button
-              onClick={() =>
-                getCatalogLink(
-                  brokerType,
-                  setCatalogLink,
-                  setOpenMeshModal,
-                  setErrorMessage,
-                  payload
-                )
-              }
-              variant="contained"
-              color="primary"
-            >
+            <Button onClick={handleClick} variant="contained" color="primary">
               Buy Now
             </Button>
           </div>

@@ -1,7 +1,6 @@
 const userId = process.env.NEXT_PUBLIC_USER_ID;
 
 export const getUserId = (brokerType) => {
-  console.log('fetching user id', brokerType);
   switch (brokerType) {
     case 'coinbase':
       return `coin${userId}`;

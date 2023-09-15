@@ -13,7 +13,14 @@ export const getCatalogLink = async (
   //   console.warn('selectedType was not provided to getCatalogLink');
   //   return;
   // }
-  console.log('providerType', providerType, 'walletType', walletType);
+  console.log(
+    'providerType',
+    providerType,
+    'walletType',
+    walletType,
+    'selectedType',
+    selectedType
+  );
 
   let UserId;
   console.log(`walletType: [${walletType}]`);
@@ -30,8 +37,6 @@ export const getCatalogLink = async (
   if (providerType === 'Wallet') {
     effectiveType = '';
   }
-
-  console.log('selectedType', selectedType);
 
   const fetchOptions = {
     method: 'POST',
