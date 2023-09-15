@@ -20,6 +20,7 @@ const ChooseProvider = ({
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [providerType, setProviderType] = useState('');
+  const [walletType, setWalletType] = useState('');
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
@@ -48,9 +49,15 @@ const ChooseProvider = ({
   }, []);
 
   const handleProviderType = (value) => {
-    setBrokerType('');
     setProviderType(value);
   };
+
+  const handleExchangeType = (value) => {
+    console.log('brokerType value', value);
+    setBrokerType(value);
+    setWalletType('');
+  };
+
   return (
     <div>
       <h1>Connect to your Provider</h1>
@@ -70,6 +77,21 @@ const ChooseProvider = ({
               </Select>
             </Box>
           </FormControl>
+          {providerType === 'Wallet' ? (
+            <FormControl fullWidth variant="outlined" margin="normal">
+              <Box pb={2}>
+                <InputLabel>Choose Wallet Provider</InputLabel>
+                <Select
+                  value={walletType}
+                  onChange={(e) => setWalletType(e.target.value)}
+                  style={{ width: '200px' }}
+                >
+                  <MenuItem value="Coinbase">Coinbase</MenuItem>
+                  <MenuItem value="MetaMask">MetaMask</MenuItem>
+                </Select>
+              </Box>
+            </FormControl>
+          ) : null}
 
           {providerType === 'CEX' ? (
             <FormControl fullWidth variant="outlined" margin="normal">
@@ -77,7 +99,7 @@ const ChooseProvider = ({
                 <InputLabel>Choose Exchange</InputLabel>
                 <Select
                   value={brokerType || 'coinbase'}
-                  onChange={(e) => setBrokerType(e.target.value)}
+                  onChange={(e) => handleExchangeType(e.target.value)}
                   style={{ width: '200px' }}
                 >
                   {networks.map((integration) => (
@@ -100,7 +122,8 @@ const ChooseProvider = ({
                 setOpenMeshModal,
                 setErrorMessage,
                 null,
-                providerType
+                providerType,
+                walletType
               )
             }
           >

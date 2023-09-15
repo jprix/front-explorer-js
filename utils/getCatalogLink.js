@@ -6,22 +6,33 @@ export const getCatalogLink = async (
   setOpenMeshModal = () => {},
   setErrorMessage = () => {},
   payload = null,
-  providerType
+  providerType,
+  walletType
 ) => {
   // if (!selectedType) {
   //   console.warn('selectedType was not provided to getCatalogLink');
   //   return;
   // }
-  console.log('providerType', providerType);
+  console.log('providerType', providerType, 'walletType', walletType);
 
+  let UserId;
+  console.log(`walletType: [${walletType}]`);
+
+  if (walletType && walletType.trim() !== '') {
+    console.log('hit if');
+
+    UserId = getUserId(`defiWallet${walletType}`);
+  } else {
+    UserId = getUserId(selectedType);
+    console.log('hit else', selectedType, 'UserId', UserId);
+  }
   let effectiveType = selectedType;
   if (providerType === 'Wallet') {
     effectiveType = '';
-    console.log('updated effectiveType', effectiveType);
   }
 
   console.log('selectedType', selectedType);
-  const UserId = getUserId(selectedType);
+
   const fetchOptions = {
     method: 'POST',
     headers: {

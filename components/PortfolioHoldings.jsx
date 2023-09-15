@@ -101,7 +101,7 @@ const PortfolioHoldings = ({ brokerType, existingAuthData }) => {
       (authData) => authData.accessToken.brokerType === brokerType
     );
     if (selectedAuthData && !linkedAccount) {
-      linkAccount(selectedAuthData); // Call the linkAccount function when the button is clicked
+      linkAccount(selectedAuthData);
     }
     fetchPortfolioHoldings();
     setOpenPortfolioModal(true);
