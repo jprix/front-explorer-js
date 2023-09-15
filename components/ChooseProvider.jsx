@@ -7,6 +7,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Box,
 } from '@mui/material';
 
 const ChooseProvider = ({
@@ -18,6 +19,7 @@ const ChooseProvider = ({
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [providerType, setProviderType] = useState('');
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
@@ -45,6 +47,10 @@ const ChooseProvider = ({
     fetchNetworks();
   }, []);
 
+  const handleProviderType = (value) => {
+    setBrokerType('');
+    setProviderType(value);
+  };
   return (
     <div>
       <h1>Connect to your Provider</h1>
@@ -52,18 +58,37 @@ const ChooseProvider = ({
       {!loading && networks.length ? (
         <form>
           <FormControl fullWidth variant="outlined" margin="normal">
-            <InputLabel>Type</InputLabel>
-            <Select
-              value={brokerType}
-              onChange={(e) => setBrokerType(e.target.value)}
-            >
-              {networks.map((integration) => (
-                <MenuItem key={integration.type} value={integration.type}>
-                  {integration.type}
-                </MenuItem>
-              ))}
-            </Select>
+            <Box pb={2}>
+              <InputLabel>Provider Type</InputLabel>
+              <Select
+                value={providerType}
+                onChange={(e) => handleProviderType(e.target.value)}
+                style={{ width: '200px' }}
+              >
+                <MenuItem value="CEX">CEX</MenuItem>
+                <MenuItem value="Wallet">Wallet</MenuItem>
+              </Select>
+            </Box>
           </FormControl>
+
+          {providerType === 'CEX' ? (
+            <FormControl fullWidth variant="outlined" margin="normal">
+              <Box pb={2}>
+                <InputLabel>Choose Exchange</InputLabel>
+                <Select
+                  value={brokerType || 'coinbase'}
+                  onChange={(e) => setBrokerType(e.target.value)}
+                  style={{ width: '200px' }}
+                >
+                  {networks.map((integration) => (
+                    <MenuItem key={integration.type} value={integration.type}>
+                      {integration.type}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Box>
+            </FormControl>
+          ) : null}
 
           <Button
             variant="contained"
@@ -73,7 +98,9 @@ const ChooseProvider = ({
                 brokerType,
                 setCatalogLink,
                 setOpenMeshModal,
-                setErrorMessage
+                setErrorMessage,
+                null,
+                providerType
               )
             }
           >

@@ -5,13 +5,22 @@ export const getCatalogLink = async (
   setCatalogLink = () => {},
   setOpenMeshModal = () => {},
   setErrorMessage = () => {},
-  payload = null
+  payload = null,
+  providerType
 ) => {
-  if (!selectedType) {
-    console.warn('selectedType was not provided to getCatalogLink');
-    return;
+  // if (!selectedType) {
+  //   console.warn('selectedType was not provided to getCatalogLink');
+  //   return;
+  // }
+  console.log('providerType', providerType);
+
+  let effectiveType = selectedType;
+  if (providerType === 'Wallet') {
+    effectiveType = '';
+    console.log('updated effectiveType', effectiveType);
   }
 
+  console.log('selectedType', selectedType);
   const UserId = getUserId(selectedType);
   const fetchOptions = {
     method: 'POST',
@@ -25,7 +34,7 @@ export const getCatalogLink = async (
 
   try {
     const link = await fetch(
-      `/api/catalog?Userid=${UserId}&BrokerType=${selectedType}`,
+      `/api/catalog?Userid=${UserId}&BrokerType=${effectiveType}`,
       fetchOptions
     );
 

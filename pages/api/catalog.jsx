@@ -11,11 +11,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Start with UserId and BrokerType since they are required
   const bodyObject = {
     UserId: userId,
-    BrokerType: BrokerType,
   };
+
+  if (BrokerType) {
+    bodyObject.BrokerType = BrokerType;
+  }
 
   // Conditionally add other properties to the bodyObject
   if (transferOptions && Object.keys(transferOptions).length > 0) {
