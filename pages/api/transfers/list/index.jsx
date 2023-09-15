@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   try {
     const fetchTransfers = await fetch(
-      `${MESH_API_URL}/api/v1/transactions/list`,
+      `${MESH_API_URL}/api/v1/transfers/list`,
       {
         method: 'POST',
         body: JSON.stringify(payload),

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -18,18 +18,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import PropTypes from 'prop-types';
-import { TransferContext } from '../context/transferContext';
 
-const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
+const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   const [openDetails, setOpenDetails] = useState(false);
-
-  const {
-    transferDetails,
-    getTransferDetails,
-    loading,
-    message,
-    setLoadingTransfers,
-  } = useContext(TransferContext);
+  const [loadingTransactions, setLoadingTransactions] = useState(true);
+  const [transactionDetails, setTransactionDetails] = useState([]);
+  const [message, setMessage] = useState('No records found.');
 
   const lastBrokerTypeRef = useRef('');
   console.log(
@@ -55,31 +49,26 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
       from: date30DaysBackTimestamp,
     };
 
-    const fetchTransfers = async () => {
-      console.log(
-        'lastBrokerTypeRef.current',
-        lastBrokerTypeRef.current,
-        'brokerType',
-        brokerType
-      );
+    const fetchTransactions = async () => {
       try {
-        if (
-          !transferDetails ||
-          transferDetails.length === 0 ||
-          lastBrokerTypeRef.current !== brokerType
-        ) {
-          setLoadingTransfers(true);
-          await getTransferDetails(payload);
-          lastBrokerTypeRef.current = brokerType;
-        }
+        setLoadingTransactions(true);
+        const getTransactions = await fetch('/api/transactions/list', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+        const response = await getTransactions.json();
+        setTransactionDetails(response.content.transactions);
       } catch (error) {
         console.log('error', error);
       } finally {
-        setLoadingTransfers(false);
+        setLoadingTransactions(false);
       }
     };
 
-    fetchTransfers();
+    fetchTransactions();
   }, [brokerType]);
 
   const handleOpen = () => {
@@ -98,12 +87,12 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
       maxWidth="md" // Ensure the dialog doesn't stretch beyond screen bounds
     >
       <DialogTitle id="transfer-details-dialog-title">
-        {brokerType.charAt(0).toUpperCase() + brokerType.slice(1)} Transfers:
+        {brokerType.charAt(0).toUpperCase() + brokerType.slice(1)} Transactions:
       </DialogTitle>
       <DialogContent>
-        {loading ? (
+        {loadingTransactions ? (
           <CircularProgress />
-        ) : transferDetails.length > 0 ? (
+        ) : transactionDetails.length > 0 ? (
           <TableContainer
             component={Paper}
             style={{ maxHeight: '400px', overflow: 'auto' }} // Adjusted the max height
@@ -124,7 +113,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {transferDetails.map((detail, index) => (
+                {transactionDetails.map((detail, index) => (
                   <TableRow
                     key={detail.id + '-' + index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -201,11 +190,11 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   );
 };
 
-TransferDetailsModal.propTypes = {
+TransactionDetailsModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   brokerType: PropTypes.string.isRequired,
   authToken: PropTypes.string.isRequired,
 };
 
-export default TransferDetailsModal;
+export default TransactionDetailsModal;

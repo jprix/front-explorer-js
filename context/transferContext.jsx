@@ -12,7 +12,7 @@ const TransferProvider = ({ children }) => {
   const getTransferDetails = async (payload) => {
     try {
       setLoadingTransfers(true);
-      const response = await fetch(`/api/transactions/list`, {
+      const response = await fetch(`/api/transfers/list`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ const TransferProvider = ({ children }) => {
         setMessage('No records found.');
         setTransferDetails([]);
       } else {
-        setTransferDetails(data.content.transactions);
+        setTransferDetails(data.content.transfers);
       }
     } catch (error) {
       setMessage(error);

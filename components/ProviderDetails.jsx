@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -8,6 +8,7 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
+import TransactionDetailsModal from './TransactionDetailsModal';
 import TransferDetailsModal from './TransferDetailsModal';
 import TransferModal from './TransferModal';
 import PortfolioHoldings from './PortfolioHoldings';
@@ -18,8 +19,10 @@ const ProviderDetails = ({
   setExistingAuthData,
 }) => {
   const [countdowns, setCountdowns] = useState({});
-  const [openTransferModal, setOpenTransferModal] = useState(false);
+  const [openTransactionModal, setOpenTransactionModal] = useState(false);
   const [depositAuthData, setDepositAuthData] = useState({});
+  const [openTransactionDetailsModal, setOpenTransactionDetailsModal] =
+    useState(false);
   const [openTransferDetailsModal, setOpenTransferDetailsModal] =
     useState(false);
   const [selectedData, setSelectedData] = useState(null);
@@ -88,8 +91,14 @@ const ProviderDetails = ({
       console.log('this was the error from Mesh', error);
     }
   };
+  const handleTransactionDetails = useCallback((data) => {
+    console.log('getting Transaction details', data);
+    setSelectedData(data); // Set the selected data
+    setOpenTransactionDetailsModal(true);
+  }, []);
+
   const handleTransferDetails = useCallback((data) => {
-    console.log('getting transfer details', data);
+    console.log('getting Transfer details', data);
     setSelectedData(data); // Set the selected data
     setOpenTransferDetailsModal(true);
   }, []);
@@ -134,7 +143,7 @@ const ProviderDetails = ({
   const handleDeposit = async (brokerAuth) => {
     console.log('depositing', brokerAuth);
     setDepositAuthData(brokerAuth);
-    setOpenTransferModal(true);
+    setOpenTransactionModal(true);
   };
 
   const handleMenuClick = (data, event) => {
@@ -274,25 +283,46 @@ const ProviderDetails = ({
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
+                        handleTransactionDetails(currentDataItem);
+                        handleMenuClose();
+                      }}
+                    >
+                      Transactions History
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
                         handleTransferDetails(currentDataItem);
                         handleMenuClose();
                       }}
                     >
-                      Transfer History
+                      Transfers History
                     </MenuItem>
                   </Menu>
                 </div>
               </Card>
 
-              {openTransferModal && (
+              {openTransactionModal && (
                 <TransferModal
-                  open={openTransferModal}
-                  onClose={() => setOpenTransferModal(false)}
+                  open={openTransactionModal}
+                  onClose={() => setOpenTransactionModal(false)}
                   brokerAuthData={depositAuthData}
                   existingAuthData={existingAuthData}
                 />
               )}
 
+              {openTransactionDetailsModal && selectedData && (
+                <TransactionDetailsModal
+                  open={openTransactionDetailsModal}
+                  onClose={() => {
+                    setOpenTransactionDetailsModal(false);
+                    setSelectedData(null); // Reset the selected data when closing the modal
+                  }}
+                  brokerType={selectedData.accessToken.brokerType}
+                  authToken={
+                    selectedData.accessToken.accountTokens[0]?.accessToken
+                  }
+                />
+              )}
               {openTransferDetailsModal && selectedData && (
                 <TransferDetailsModal
                   open={openTransferDetailsModal}
