@@ -12,7 +12,7 @@ import {
 
 const ChooseProvider = ({
   setCatalogLink,
-  brokerType,
+  brokerType = 'coinbase',
   setOpenMeshModal,
   setBrokerType,
 }) => {
@@ -50,13 +50,12 @@ const ChooseProvider = ({
 
   const handleProviderType = (value) => {
     setProviderType(value);
-    setWalletType('');
   };
 
   const handleExchangeType = (value) => {
     console.log('brokerType value', value);
-    setBrokerType(value);
     setWalletType('');
+    setBrokerType(value);
   };
 
   const handleClick = async () => {

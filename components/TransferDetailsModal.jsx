@@ -22,22 +22,15 @@ import { TransferContext } from '../context/transferContext';
 
 const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   const [openDetails, setOpenDetails] = useState(false);
-
+  console.log('brokerType', brokerType);
   const {
     transferDetails,
     getTransferDetails,
+    lastXFRBrokerType,
     loading,
     message,
     setLoadingTransfers,
   } = useContext(TransferContext);
-
-  const lastBrokerTypeRef = useRef('');
-  console.log(
-    'lastBrokerTypeRef',
-    lastBrokerTypeRef,
-    'broker type',
-    brokerType
-  );
 
   useEffect(() => {
     const millisecondsInADay = 24 * 60 * 60 * 1000;
@@ -56,30 +49,19 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
     };
 
     const fetchTransfers = async () => {
-      console.log(
-        'lastBrokerTypeRef.current',
-        lastBrokerTypeRef.current,
-        'brokerType',
-        brokerType
-      );
       try {
-        if (
-          !transferDetails ||
-          transferDetails.length === 0 ||
-          lastBrokerTypeRef.current !== brokerType
-        ) {
-          setLoadingTransfers(true);
-          await getTransferDetails(payload);
-          lastBrokerTypeRef.current = brokerType;
-        }
+        setLoadingTransfers(true);
+        await getTransferDetails(payload, brokerType);
       } catch (error) {
         console.log('error', error);
       } finally {
         setLoadingTransfers(false);
       }
     };
-
-    fetchTransfers();
+    console.log(lastXFRBrokerType, brokerType);
+    if (!transferDetails?.length || lastXFRBrokerType !== brokerType) {
+      fetchTransfers();
+    }
   }, [brokerType]);
 
   const handleOpen = () => {
@@ -88,6 +70,10 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
 
   const handleClose = () => {
     setOpenDetails(false);
+  };
+
+  const getNestedValue = (obj, path, defaultValue = '') => {
+    return path.split('.').reduce((o, p) => (o ? o[p] : defaultValue), obj);
   };
 
   return (
@@ -106,7 +92,12 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
         ) : transferDetails.length > 0 ? (
           <TableContainer
             component={Paper}
-            style={{ maxHeight: '400px', overflow: 'auto' }} // Adjusted the max height
+            style={{
+              maxHeight: '400px',
+              overflowY: 'auto',
+              whiteSpace: 'normal',
+              wordWrap: 'break-word',
+            }}
           >
             <Table aria-label="simple table">
               <TableHead>
@@ -131,7 +122,7 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                   >
                     <TableCell
                       style={{
-                        maxWidth: '100px', // Adjust based on your needs
+                        maxWidth: '600px', // Adjust based on your needs
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -156,25 +147,51 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                         onClose={handleClose}
                         aria-labelledby="detail-dialog-title"
                       >
-                        <DialogTitle id="detail-dialog-title">
-                          Detail Information
+                        <DialogTitle
+                          id="detail-dialog-title"
+                          style={{ fontWeight: 'bold' }}
+                        >
+                          Transfer Detail Information
                         </DialogTitle>
-                        <DialogContent>
+                        <DialogContent
+                          style={{
+                            maxWidth: '600px',
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                          }}
+                        >
                           <Grid container spacing={2}>
-                            {Object.entries(detail).map(([key, value]) => (
-                              <Grid item xs={12} sm={6} key={key}>
-                                <Typography variant="subtitle2">
-                                  {key}:
-                                </Typography>
-                                <Typography variant="body2">
-                                  {value.toString()}
-                                </Typography>
-                              </Grid>
-                            ))}
+                            {Object.entries(detail).map(([key, value]) => {
+                              // Handle special nested case
+                              const displayValue =
+                                key === 'networkTransactionFee'
+                                  ? getNestedValue(value, 'amount')
+                                  : value.toString();
+
+                              return (
+                                <Grid item xs={12} sm={6} key={key}>
+                                  <Typography
+                                    variant="subtitle1"
+                                    style={{ fontWeight: 'bold' }}
+                                  >
+                                    {key}:
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    style={{
+                                      whiteSpace: 'normal',
+                                      wordWrap: 'break-word',
+                                    }}
+                                  >
+                                    {displayValue}
+                                  </Typography>
+                                </Grid>
+                              );
+                            })}
                           </Grid>
                         </DialogContent>
+
                         <DialogActions>
-                          {/* Close button for the detailed view */}
                           <Button onClick={handleClose} color="primary">
                             Close
                           </Button>

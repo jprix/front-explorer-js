@@ -13,11 +13,7 @@ import TransferDetailsModal from './TransferDetailsModal';
 import TransferModal from './TransferModal';
 import PortfolioHoldings from './PortfolioHoldings';
 
-const ProviderDetails = ({
-  existingAuthData,
-
-  setExistingAuthData,
-}) => {
+const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   const [countdowns, setCountdowns] = useState({});
   const [openTransactionModal, setOpenTransactionModal] = useState(false);
   const [depositAuthData, setDepositAuthData] = useState({});

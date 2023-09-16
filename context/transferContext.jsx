@@ -8,10 +8,12 @@ const TransferProvider = ({ children }) => {
   const [transferDetails, setTransferDetails] = useState([]);
   const [loading, setLoadingTransfers] = useState(true);
   const [message, setMessage] = useState('');
+  const [lastXFRBrokerType, setLastXFRBrokerType] = useState(null);
 
-  const getTransferDetails = async (payload) => {
+  const getTransferDetails = async (payload, brokerType) => {
     try {
       setLoadingTransfers(true);
+      setLastXFRBrokerType(brokerType);
       const response = await fetch(`/api/transfers/list`, {
         method: 'POST',
         headers: {
@@ -26,7 +28,7 @@ const TransferProvider = ({ children }) => {
         // Throw an error if the server responded with a non-200 status code.
         setTransferDetails([]);
         setMessage(data.error || 'Something went wrong');
-        throw new Error(data.error || 'Something went wrong', response.status);
+        // throw new Error(data.error || 'Something went wrong', response.status);
       }
       if (response && data.content.total === 0) {
         setMessage('No records found.');
@@ -46,6 +48,7 @@ const TransferProvider = ({ children }) => {
     loading,
     setLoadingTransfers,
     transferDetails,
+    lastXFRBrokerType,
     getTransferDetails,
     message,
   };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -18,20 +18,19 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import PropTypes from 'prop-types';
+import { TransactionContext } from 'context/transactionContext';
 
 const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   const [openDetails, setOpenDetails] = useState(false);
-  const [loadingTransactions, setLoadingTransactions] = useState(true);
-  const [transactionDetails, setTransactionDetails] = useState([]);
-  const [message, setMessage] = useState('No records found.');
-
-  const lastBrokerTypeRef = useRef('');
-  console.log(
-    'lastBrokerTypeRef',
-    lastBrokerTypeRef,
-    'broker type',
-    brokerType
-  );
+  console.log('brokerType', brokerType);
+  const {
+    transactionDetails,
+    getTransactionsDetails,
+    loadingTransactions,
+    lastTXNBrokerType,
+    message,
+    setLoadingTransactions,
+  } = useContext(TransactionContext);
 
   useEffect(() => {
     const millisecondsInADay = 24 * 60 * 60 * 1000;
@@ -41,7 +40,6 @@ const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
     const date30DaysBackTimestamp = Math.floor(
       date30DaysBackMilliseconds / 1000
     );
-    console.log(date30DaysBackTimestamp);
     const payload = {
       authToken: authToken,
       type: brokerType,
@@ -49,18 +47,16 @@ const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
       from: date30DaysBackTimestamp,
     };
 
+    console.log(
+      'received brokerType',
+      brokerType,
+      'receeuved lastTXNBrokerType',
+      lastTXNBrokerType
+    );
     const fetchTransactions = async () => {
       try {
         setLoadingTransactions(true);
-        const getTransactions = await fetch('/api/transactions/list', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-        const response = await getTransactions.json();
-        setTransactionDetails(response.content.transactions);
+        await getTransactionsDetails(payload, brokerType);
       } catch (error) {
         console.log('error', error);
       } finally {
@@ -68,7 +64,9 @@ const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
       }
     };
 
-    fetchTransactions();
+    if (!transactionDetails?.length || lastTXNBrokerType !== brokerType) {
+      fetchTransactions();
+    }
   }, [brokerType]);
 
   const handleOpen = () => {
@@ -145,14 +143,17 @@ const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
                         onClose={handleClose}
                         aria-labelledby="detail-dialog-title"
                       >
-                        <DialogTitle id="detail-dialog-title">
-                          Detail Information
+                        <DialogTitle id="detail-dialog-title" color="primary">
+                          Transaction Detail Information:
                         </DialogTitle>
                         <DialogContent>
                           <Grid container spacing={2}>
                             {Object.entries(detail).map(([key, value]) => (
                               <Grid item xs={12} sm={6} key={key}>
-                                <Typography variant="subtitle2">
+                                <Typography
+                                  variant="subtitle2"
+                                  style={{ fontWeight: 'bold' }}
+                                >
                                   {key}:
                                 </Typography>
                                 <Typography variant="body2">
