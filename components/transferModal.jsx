@@ -112,6 +112,7 @@ const Step3 = ({
   handleExecuteTransfer,
   loading,
   formValues,
+  errorMessage,
 }) => (
   <div>
     <h2>Submit Transfer</h2>
@@ -121,6 +122,7 @@ const Step3 = ({
         depositAddress={depositAddress}
         transferDetails={transferDetails}
         formValues={formValues}
+        errorMessage={errorMessage}
       />
     ) : (
       <div>Loading deposit address...</div>
@@ -151,11 +153,12 @@ const TransferModal = ({
   const [toAuthData, setToAuthData] = useState(null);
   const [transferDetails, setTransferDetails] = useState({});
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMesage] = useState('');
 
   const [validAddress, setValidAddress] = useState(false);
   const [symbol, setSymbol] = useState('ETH');
   const [chain, setChain] = useState('ethereum');
-  console.log('toType', toAuthData?.accessToken?.brokerType);
+
   const [formValues, setFormValues] = useState({
     fromAuthToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
     fromType: brokerAuthData?.accessToken?.brokerType,
@@ -255,6 +258,7 @@ const TransferModal = ({
 
       if (!executePreview.ok) {
         console.log('executePreview', executePreview);
+        setErrorMesage(executePreview.statusText);
         throw new Error(
           `Failed to Execute Preview Address: ${executePreview.statusText}`
         );
@@ -293,15 +297,13 @@ const TransferModal = ({
         body: JSON.stringify(payload),
       });
 
-      if (!executeTransfer.ok) {
-        console.log('executeTransfer', executeTransfer);
-        throw new Error(
-          `Failed to Execute Transfer: ${executeTransfer.statusText}`
-        );
+      const response = await executeTransfer.json();
+
+      if (executeTransfer.status !== 200) {
+        console.log('executeTransfer not OK', response.error);
+        setErrorMesage(response.error);
       }
 
-      const response = await executeTransfer.json();
-      console.log('response', response);
       if (response.content.status === 'mfaRequired') {
         console.log('mfaRequired');
         alert('mfaRequired.  Paste in code and resend');
@@ -381,6 +383,7 @@ const TransferModal = ({
             handleExecuteTransfer={handleExecuteTransfer}
             formValues={formValues}
             loading={loading}
+            errorMessage={errorMessage}
           />
         )}
       </DialogContent>

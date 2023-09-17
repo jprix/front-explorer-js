@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
-  console.log('*** hit preview ' , req.method, req.body); // log the request method and body
+  console.log('*** hit preview ', req.method, req.body); // log the request method and body
 
-  const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;  
+  const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
 
   const payload = req.body;
 
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
         headers: {
           'Content-Type': 'application/json',
           'X-Client-Id': CLIENT_ID,
-          'X-Client-Secret': PROD_API_KEY
+          'X-Client-Secret': PROD_API_KEY,
         },
       }
     );
@@ -26,10 +26,8 @@ export default async function handler(req, res) {
       const responseBody = await executePreview.json();
       console.error('Error response from Mesh API:', responseBody);
       const errorMessage = `Failed to execute transfer preview. Status: ${executePreview.status} - ${executePreview.statusText}. Message: ${responseBody.message}`;
-
-      throw new Error(
-        `Failed to Preview transfer: ${errorMessage}`
-      );
+      return res.status(500).json({ error: errorMessage });
+      //throw new Error(`Failed to Preview transfer: ${errorMessage}`);
     }
     const response = await executePreview.json();
     return res.status(200).json(response);

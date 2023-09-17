@@ -3,17 +3,20 @@ import {
   Card,
   CardContent,
   FormControl,
-  MenuItem,
   TextField,
   Typography,
-  Select,
-  Button,
-  CircularProgress,
 } from '@mui/material';
 import { useTheme } from '@mui/system';
 
-const ExecuteTransfer = ({ brokerAuthData, transferDetails, formValues }) => {
+const ExecuteTransfer = ({
+  brokerAuthData,
+  transferDetails,
+  formValues,
+  errorMessage,
+}) => {
   const theme = useTheme();
+
+  console.log('error state', errorMessage);
 
   return (
     <Card>
@@ -46,6 +49,7 @@ const ExecuteTransfer = ({ brokerAuthData, transferDetails, formValues }) => {
               value={transferDetails?.previewResult?.previewId}
               onChange={(e) => handleInputChange('previewId', e.target.value)}
             />
+            {errorMessage !== '' ? <p> Preview Error: {errorMessage}</p> : null}
           </FormControl>
         </form>
       </CardContent>
