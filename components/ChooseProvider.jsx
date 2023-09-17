@@ -19,7 +19,7 @@ const ChooseProvider = ({
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-  const [providerType, setProviderType] = useState('');
+  const [providerType, setProviderType] = useState(null);
   const [walletType, setWalletType] = useState('');
   useEffect(() => {
     const fetchNetworks = async () => {
@@ -54,7 +54,6 @@ const ChooseProvider = ({
 
   const handleExchangeType = (value) => {
     console.log('brokerType value', value);
-    setWalletType('');
     setBrokerType(value);
   };
 
@@ -89,6 +88,25 @@ const ChooseProvider = ({
               </Select>
             </Box>
           </FormControl>
+
+          {providerType === 'CEX' ? (
+            <FormControl fullWidth variant="outlined" margin="normal">
+              <Box pb={2}>
+                <InputLabel>Choose Exchange</InputLabel>
+                <Select
+                  value={brokerType}
+                  onChange={(e) => handleExchangeType(e.target.value)}
+                  style={{ width: '200px' }}
+                >
+                  {networks.map((integration) => (
+                    <MenuItem key={integration.type} value={integration.type}>
+                      {integration.type}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Box>
+            </FormControl>
+          ) : null}
           {providerType === 'Wallet' ? (
             <FormControl fullWidth variant="outlined" margin="normal">
               <Box pb={2}>
@@ -100,25 +118,6 @@ const ChooseProvider = ({
                 >
                   <MenuItem value="Coinbase">Coinbase</MenuItem>
                   <MenuItem value="MetaMask">MetaMask</MenuItem>
-                </Select>
-              </Box>
-            </FormControl>
-          ) : null}
-
-          {providerType === 'CEX' ? (
-            <FormControl fullWidth variant="outlined" margin="normal">
-              <Box pb={2}>
-                <InputLabel>Choose Exchange</InputLabel>
-                <Select
-                  value={brokerType || 'coinbase'}
-                  onChange={(e) => handleExchangeType(e.target.value)}
-                  style={{ width: '200px' }}
-                >
-                  {networks.map((integration) => (
-                    <MenuItem key={integration.type} value={integration.type}>
-                      {integration.type}
-                    </MenuItem>
-                  ))}
                 </Select>
               </Box>
             </FormControl>

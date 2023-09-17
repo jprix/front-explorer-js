@@ -18,14 +18,14 @@ export const getCatalogLink = async (
     providerType,
     'walletType',
     walletType,
-    'selectedType',
+    'selectedType brokerType',
     selectedType
   );
 
   let UserId;
   console.log(`walletType: [${walletType}]`);
 
-  if (walletType && walletType.trim() !== '') {
+  if (walletType.length && walletType.trim() !== '') {
     console.log('hit if');
 
     UserId = getUserId(`defiWallet${walletType}`);
