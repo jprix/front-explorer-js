@@ -81,6 +81,7 @@ const HomePage = () => {
             setCatalogLink={setCatalogLink}
             setBrokerType={setBrokerType}
             setOpenMeshModal={setOpenMeshModal}
+            setLinkAnother={setLinkAnother}
           />
         ) : null}
       </div>

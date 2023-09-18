@@ -4,13 +4,7 @@ import { PropTypes } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '@mui/material';
+import { Button, FormControl, MenuItem, Select } from '@mui/material';
 import { styled } from '@mui/system';
 
 const Header = ({ setLinkAnother, connectAnotherAccount, authData }) => {

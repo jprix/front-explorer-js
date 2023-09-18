@@ -67,7 +67,7 @@ const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
     if (!transactionDetails?.length || lastTXNBrokerType !== brokerType) {
       fetchTransactions();
     }
-  }, [brokerType]);
+  }, []);
 
   const handleOpen = () => {
     setOpenDetails(true);

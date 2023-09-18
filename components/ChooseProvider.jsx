@@ -15,6 +15,7 @@ const ChooseProvider = ({
   brokerType = 'coinbase',
   setOpenMeshModal,
   setBrokerType,
+  setLinkAnother,
 }) => {
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -125,6 +126,15 @@ const ChooseProvider = ({
 
           <Button variant="contained" color="secondary" onClick={handleClick}>
             Connect to Mesh
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            color="tertiary"
+            onClick={() => setLinkAnother(false)}
+            sx={{ paddingLeft: '10px' }}
+          >
+            Cancel
           </Button>
         </form>
       ) : (
