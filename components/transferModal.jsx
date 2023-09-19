@@ -26,6 +26,7 @@ const Step1 = ({
   symbol,
   setSymbol,
   chain,
+  errorMessage,
   setChain,
 }) => {
   return (
@@ -40,6 +41,7 @@ const Step1 = ({
           chain={chain}
           setChain={setChain}
           setSymbol={setSymbol}
+          errorMessage={errorMessage}
         />
       ) : (
         <div>Loading deposit address...</div>
@@ -160,7 +162,7 @@ const TransferModal = ({
   const [showMFAForm, setShowMFAForm] = useState(false);
   const [mfaCode, setMfaCode] = useState('');
   const [validAddress, setValidAddress] = useState(false);
-  const [symbol, setSymbol] = useState('eth');
+  const [symbol, setSymbol] = useState('ETH');
   const [chain, setChain] = useState('ethereum');
   const router = useRouter();
 
@@ -227,14 +229,17 @@ const TransferModal = ({
         },
         body: JSON.stringify(payload),
       });
+      const response = await generateAddress.json();
 
       if (!generateAddress.ok) {
+        console.log('generateAddress not OK', response.error);
+        setErrorMesage(response.error);
+        console.log('error message updated ', response.error);
         throw new Error(
           `Failed to Generate Address: ${generateAddress.statusText}`
         );
       }
 
-      const response = await generateAddress.json();
       console.log('response', response);
       setDepositAddress(response.content);
       setValidAddress(true);

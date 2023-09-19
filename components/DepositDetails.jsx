@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -8,20 +8,18 @@ import {
   Typography,
   Select,
   Grid,
-  CircularProgress,
 } from '@mui/material';
 import { useTheme } from '@mui/system';
 
 const GetDepositDetails = ({
-  brokerAuthData,
   toAuthData,
-  transferDetails,
   setSymbol,
   symbol,
   setChain,
   chain,
+  errorMessage,
 }) => {
-  const theme = useTheme();
+  console.log('error state', errorMessage);
 
   return (
     <div>
@@ -76,11 +74,11 @@ const GetDepositDetails = ({
                 onChange={(e) => setChain(e.target.value)}
               />
             </FormControl>
+            {errorMessage !== '' ? <p> Preview Error: {errorMessage}</p> : ''}
             <Grid container justifyContent="flex-end" mt={2}></Grid>
           </form>
         </CardContent>
       </Card>
-      {/* )} */}
     </div>
   );
 };

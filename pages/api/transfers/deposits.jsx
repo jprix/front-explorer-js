@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     if (!depositAddress.ok) {
       const responseBody = await depositAddress.json();
       const errorMessage = `Failed to retrieve or generate a deposit address. Status: ${depositAddress.status} - ${depositAddress.statusText}. Message: ${responseBody.message}`;
-      throw new Error(errorMessage);
+      return res.status(500).json({ error: errorMessage });
     }
     const response = await depositAddress.json();
     return res.status(200).json(response);
