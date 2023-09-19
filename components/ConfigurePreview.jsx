@@ -17,6 +17,7 @@ const ConfigurePreviewForm = ({
   onStepChange,
   setTransferDetails,
   handleInputChange,
+  errorMessage,
 }) => {
   console.log('formValues', formValues);
   const theme = useTheme();
@@ -105,6 +106,7 @@ const ConfigurePreviewForm = ({
               }
             />
           </FormControl>
+          <p>{errorMessage}</p>
         </form>
       </CardContent>
     </Card>

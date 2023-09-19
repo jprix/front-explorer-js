@@ -13,6 +13,9 @@ const ExecuteTransfer = ({
   transferDetails,
   formValues,
   errorMessage,
+  setMfaCode,
+  mfaRequired,
+  mfaCode,
 }) => {
   const theme = useTheme();
 
@@ -35,9 +38,7 @@ const ExecuteTransfer = ({
               disabled
               label="From Auth Token"
               value={formValues?.fromAuthToken}
-              onChange={(e) =>
-                handleInputChange('fromAuthToken', e.target.value)
-              }
+              onChange={(e) => handleInputChange('mfaCode', e.target.value)}
             />
           </FormControl>
 
@@ -46,11 +47,24 @@ const ExecuteTransfer = ({
               required
               disabled
               label="Preview ID"
-              value={transferDetails?.previewResult?.previewId}
+              value={transferDetails?.content.previewResult?.previewId}
               onChange={(e) => handleInputChange('previewId', e.target.value)}
             />
             {errorMessage !== '' ? <p> Preview Error: {errorMessage}</p> : null}
           </FormControl>
+          {mfaRequired ? (
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                required
+                label="Please enter your MFA code"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+              />
+              {errorMessage !== '' ? (
+                <p> Preview Error: {errorMessage}</p>
+              ) : null}
+            </FormControl>
+          ) : null}
         </form>
       </CardContent>
     </Card>

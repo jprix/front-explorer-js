@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles';
 import ConfigurePreviewForm from './ConfigurePreview';
 import ExecuteTransfer from './ExecuteTransfer';
 import GetDepositDetails from './DepositDetails';
+import { useRouter } from 'next/router';
 
 const Step1 = ({
   brokerAuthData,
@@ -67,13 +68,8 @@ const Step2 = ({
   handleExecutePreview,
   loading,
   formValues,
+  errorMessage,
 }) => {
-  console.log(
-    'step 2 depositAddress',
-    depositAddress,
-    'toAuthData: ',
-    toAuthData
-  );
   return (
     <div>
       <h2>Preview Transfer</h2>
@@ -86,6 +82,7 @@ const Step2 = ({
           setTransferDetails={setTransferDetails}
           handleExecutePreview={handleExecutePreview}
           formValues={formValues}
+          errorMessage={errorMessage}
         />
       ) : (
         <div>Loading preview details...</div>
@@ -113,6 +110,9 @@ const Step3 = ({
   loading,
   formValues,
   errorMessage,
+  setMfaCode,
+  mfaCode,
+  mfaRequired,
 }) => (
   <div>
     <h2>Submit Transfer</h2>
@@ -123,6 +123,9 @@ const Step3 = ({
         transferDetails={transferDetails}
         formValues={formValues}
         errorMessage={errorMessage}
+        setMfaCode={setMfaCode}
+        mfaCode={mfaCode}
+        mfaRequired={mfaRequired}
       />
     ) : (
       <div>Loading deposit address...</div>
@@ -154,10 +157,12 @@ const TransferModal = ({
   const [transferDetails, setTransferDetails] = useState({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMesage] = useState('');
-
+  const [showMFAForm, setShowMFAForm] = useState(false);
+  const [mfaCode, setMfaCode] = useState('');
   const [validAddress, setValidAddress] = useState(false);
-  const [symbol, setSymbol] = useState('ETH');
+  const [symbol, setSymbol] = useState('eth');
   const [chain, setChain] = useState('ethereum');
+  const router = useRouter();
 
   const [formValues, setFormValues] = useState({
     fromAuthToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
@@ -166,7 +171,7 @@ const TransferModal = ({
     networkId: depositAddress?.networkId,
     symbol: 'eth',
     toAddress: depositAddress?.address,
-    amount: 0.009,
+    amount: 0.012,
     fiatCurrency: 'USD',
   });
 
@@ -256,18 +261,16 @@ const TransferModal = ({
         body: JSON.stringify(payload),
       });
 
+      const response = await executePreview.json();
+
       if (!executePreview.ok) {
-        console.log('executePreview', executePreview);
-        setErrorMesage(executePreview.statusText);
+        setErrorMesage(response.content.errorMessage);
         throw new Error(
           `Failed to Execute Preview Address: ${executePreview.statusText}`
         );
       }
 
-      const response = await executePreview.json();
-      console.log('response', response);
-      setTransferDetails(response.content);
-      //   setValidAddress(true);
+      setTransferDetails(response);
 
       handleStepChange(3);
     } catch (error) {
@@ -279,16 +282,16 @@ const TransferModal = ({
 
   const handleExecuteTransfer = async () => {
     setLoading(true);
-    console.log('formValues', formValues);
 
     const payload = {
       fromAuthToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
       fromType: brokerAuthData?.accessToken?.brokerType,
-      previewId: transferDetails?.previewResult?.previewId,
-      mfaCode: '6483355',
+      previewId: transferDetails?.content.previewResult?.previewId,
+      mfaCode: mfaCode,
     };
 
     try {
+      console.log(errorMessage);
       const executeTransfer = await fetch('/api/transfers/execute', {
         method: 'POST',
         headers: {
@@ -299,18 +302,19 @@ const TransferModal = ({
 
       const response = await executeTransfer.json();
 
-      if (executeTransfer.status !== 200) {
+      if (!response.ok) {
         console.log('executeTransfer not OK', response.error);
-        setErrorMesage(response.error);
+        setErrorMesage(response.content.errorMessage);
       }
 
       if (response.content.status === 'mfaRequired') {
         console.log('mfaRequired');
-        alert('mfaRequired.  Paste in code and resend');
+        setShowMFAForm(true);
       } else {
         alert(
           `Transfer Status: ${response.status}.  Here is your transferId: ${response.content.executeTransferResult.transferId}`
         );
+        router.push('/');
       }
     } catch (error) {
       console.error('An error occurred:', error.message);
@@ -384,6 +388,9 @@ const TransferModal = ({
             formValues={formValues}
             loading={loading}
             errorMessage={errorMessage}
+            setMfaCode={setMfaCode}
+            mfaCode={mfaCode}
+            mfaRequired={showMFAForm}
           />
         )}
       </DialogContent>

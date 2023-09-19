@@ -64,6 +64,7 @@ const GetDepositDetails = ({
                 <MenuItem value="BTC">BTC</MenuItem>
                 <MenuItem value="LTC">LTC</MenuItem>
                 <MenuItem value="SOL">SOL</MenuItem>
+                <MenuItem value="DOGE">DOGE</MenuItem>
               </Select>
             </FormControl>
             <FormControl fullWidth>

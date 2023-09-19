@@ -25,7 +25,7 @@ export const getCatalogLink = async (
   let UserId;
   console.log(`walletType: [${walletType}]`);
 
-  if (walletType.length && walletType.trim() !== '') {
+  if (walletType?.length && walletType.trim() !== '') {
     console.log('hit if');
 
     UserId = getUserId(`defiWallet${walletType}`);

@@ -12,6 +12,7 @@ import TransactionDetailsModal from './TransactionDetailsModal';
 import TransferDetailsModal from './TransferDetailsModal';
 import TransferModal from './TransferModal';
 import PortfolioHoldings from './PortfolioHoldings';
+import { disconnect } from 'utils/disconnect';
 
 const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   const [countdowns, setCountdowns] = useState({});
@@ -107,28 +108,19 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
     };
 
     try {
-      const disconnect = await fetch('/api/disconnect', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!disconnect.ok) {
-        throw new Error(
-          `Failed to Disconnect account: ${disconnect.statusText}`
+      const result = await disconnect(payload);
+      console.log('result', result);
+      if (result.status === 'ok') {
+        const updatedAuthData = existingAuthData.filter(
+          (data) => data !== authData
         );
-      }
+        setExistingAuthData(updatedAuthData);
+        localStorage.setItem('authData', JSON.stringify(updatedAuthData[0]));
 
-      // Remove disconnected authData from existingAuthData state and localStorage
-      const updatedAuthData = existingAuthData.filter(
-        (data) => data !== authData
-      );
-      setExistingAuthData(updatedAuthData);
-      localStorage.setItem('authData', JSON.stringify(updatedAuthData[0]));
+        alert('Disconnected successfully');
+      }
     } catch (error) {
-      console.log('this was the error from Mesh', error);
+      alert('Error while disconnecting', error);
     }
   };
 

@@ -68,6 +68,11 @@ const PayPage = () => {
           address: '0xcC90c7c3E3Ad6e4E6bd8CF4fB10D09edC20a9506', // address to transfer
           networkId: 'e3c7fdd8-b1fc-4e51-85ae-bb276e075611', // polygon network id
         },
+        {
+          symbol: 'SOL',
+          address: 'DVifyLEUVxCAUTdi8rPHX9fmi1tCwv7hciut4BErskZ8', // address to transfer
+          networkId: '0291810a-5947-424d-9a59-e88bb33e999d', // polygon network id
+        },
       ],
       amountInFiat: 10,
     },
