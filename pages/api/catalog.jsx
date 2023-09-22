@@ -1,18 +1,15 @@
-import { getUserId } from '../../utils/UserId';
-
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
-  const { symbol, BrokerType } = req.query;
+  const { symbol, BrokerType, UserId } = req.query;
   const { transferOptions, amountInFiat } = req.body;
 
-  const userId = getUserId(BrokerType);
-
+  console.log('final broker type, ', req.query);
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const bodyObject = {
-    UserId: userId,
+    UserId: UserId,
   };
 
   if (BrokerType) {

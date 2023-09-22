@@ -21,7 +21,6 @@ const ChooseProvider = ({
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [providerType, setProviderType] = useState(null);
-  const [walletType, setWalletType] = useState('');
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
@@ -65,8 +64,7 @@ const ChooseProvider = ({
       setOpenMeshModal,
       setErrorMessage,
       null,
-      providerType,
-      walletType
+      providerType
     );
   };
 
@@ -113,12 +111,11 @@ const ChooseProvider = ({
               <Box pb={2}>
                 <InputLabel>Choose Wallet Provider</InputLabel>
                 <Select
-                  value={walletType}
-                  onChange={(e) => setWalletType(e.target.value)}
+                  value={brokerType}
+                  onChange={(e) => setBrokerType(e.target.value)}
                   style={{ width: '200px' }}
                 >
-                  <MenuItem value="Coinbase">Coinbase</MenuItem>
-                  <MenuItem value="MetaMask">MetaMask</MenuItem>
+                  <MenuItem value="deFiWallet">deFiWallet</MenuItem>
                 </Select>
               </Box>
             </FormControl>
