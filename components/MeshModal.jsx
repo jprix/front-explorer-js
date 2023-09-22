@@ -23,6 +23,9 @@ const MeshModal = ({
           console.info('FRONT SUCCESS', authData);
           onSuccess(authData);
         },
+        onEvent: (event) => {
+          console.info('FRONT EVENT', event);
+        },
         onExit: (error) => {
           if (error) {
             console.error(`[FRONT ERROR] ${error}`);

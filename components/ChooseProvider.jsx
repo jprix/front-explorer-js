@@ -20,7 +20,7 @@ const ChooseProvider = ({
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-  const [providerType, setProviderType] = useState(null);
+  const [providerType, setProviderType] = useState('CEX');
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
@@ -63,8 +63,7 @@ const ChooseProvider = ({
       setCatalogLink,
       setOpenMeshModal,
       setErrorMessage,
-      null,
-      providerType
+      null
     );
   };
 

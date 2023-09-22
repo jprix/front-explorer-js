@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     UserId: UserId,
   };
 
-  if (BrokerType) {
+  if (BrokerType !== 'deFiWallet') {
     bodyObject.BrokerType = BrokerType;
   }
 

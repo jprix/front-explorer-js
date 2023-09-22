@@ -8,7 +8,7 @@ export const getUserId = (brokerType) => {
     case 'coinbase':
       return `coin${userId}`;
     case 'deFiWallet':
-      return `defi1111113344`;
+      return `defi${userId}`;
 
     case 'robinhood':
       return `robin${userId}`;
