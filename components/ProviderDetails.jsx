@@ -11,6 +11,7 @@ import {
 import TransactionDetailsModal from './TransactionDetailsModal';
 import TransferDetailsModal from './TransferDetailsModal';
 import TransferModal from './TransferModal';
+import TradeModal from './TradeModal';
 import PortfolioHoldings from './PortfolioHoldings';
 import { disconnect } from 'utils/disconnect';
 
@@ -22,6 +23,7 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
     useState(false);
   const [openTransferDetailsModal, setOpenTransferDetailsModal] =
     useState(false);
+  const [openTradeModal, setOpenTradeModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [portfolioValue, setPortfolioValue] = useState({});
   const [currentDataItem, setCurrentDataItem] = useState(null);
@@ -92,6 +94,12 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
     console.log('getting Transaction details', data);
     setSelectedData(data); // Set the selected data
     setOpenTransactionDetailsModal(true);
+  }, []);
+
+  const handleTrade = useCallback((data) => {
+    console.log('getting Trade details', data);
+    setSelectedData(data);
+    setOpenTradeModal(true);
   }, []);
 
   const handleTransferDetails = useCallback((data) => {
@@ -285,6 +293,14 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
                     >
                       Transfers History
                     </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleTrade(currentDataItem);
+                        handleMenuClose();
+                      }}
+                    >
+                      Trade
+                    </MenuItem>
                   </Menu>
                 </div>
               </Card>
@@ -317,6 +333,19 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
                   onClose={() => {
                     setOpenTransferDetailsModal(false);
                     setSelectedData(null); // Reset the selected data when closing the modal
+                  }}
+                  brokerType={selectedData.accessToken.brokerType}
+                  authToken={
+                    selectedData.accessToken.accountTokens[0]?.accessToken
+                  }
+                />
+              )}
+              {openTradeModal && selectedData && (
+                <TradeModal
+                  open={openTradeModal}
+                  onClose={() => {
+                    setOpenTradeModal(false);
+                    setSelectedData(null);
                   }}
                   brokerType={selectedData.accessToken.brokerType}
                   authToken={

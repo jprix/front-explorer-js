@@ -58,6 +58,7 @@ const ChooseProvider = ({
   };
 
   const handleClick = async () => {
+    setLoading(true);
     await getCatalogLink(
       brokerType,
       setCatalogLink,
@@ -65,6 +66,7 @@ const ChooseProvider = ({
       setErrorMessage,
       null
     );
+    setLoading(false);
   };
 
   return (
