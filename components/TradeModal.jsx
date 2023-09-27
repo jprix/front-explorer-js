@@ -16,7 +16,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import PropTypes from 'prop-types';
-import SelectInput from '@mui/material/Select/SelectInput';
 
 const TradeModal = ({ open, onClose, brokerType, authToken }) => {
   const [brokerDetails, setBrokerDetails] = useState({});
