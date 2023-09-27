@@ -13,7 +13,6 @@ const MeshModal = ({
   transferFinished,
   pageLoaded,
   setPageLoaded,
-  setLoadingMesh,
 }) => {
   const [frontConnection, setFrontConnection] = useState(null);
   const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
@@ -29,11 +28,11 @@ const MeshModal = ({
         onEvent: (event) => {
           console.info('FRONT EVENT', event);
 
-          if (event.type === 'pageLoaded') {
-            console.log('page loaded');
-            setLoadingMesh(false);
-            setPageLoaded(true);
-          }
+          // if (event.type === 'pageLoaded') {
+          //   console.log('page loaded');
+          //   setLoadingMesh(false);
+          //   setPageLoaded(true);
+          // }
         },
 
         onExit: (error) => {
@@ -80,7 +79,6 @@ MeshModal.propTypes = {
   transferFinished: PropTypes.func,
   setPageLoaded: PropTypes.func,
   pageLoaded: PropTypes.bool.isRequired,
-  setLoadingMesh: PropTypes.func.isRequired,
 };
 
 export default MeshModal;

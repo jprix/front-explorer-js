@@ -23,6 +23,9 @@ const PayPage = () => {
   const [brokerType, setBrokerType] = useState('');
   const router = useRouter();
 
+  const DESTINATION_ADDRESS = process.env.NEXT_PUBLIC_DESTINATION_ADDRESS;
+
+  console.log('destination address', DESTINATION_ADDRESS);
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
@@ -65,7 +68,7 @@ const PayPage = () => {
       toAddresses: [
         {
           symbol: 'USDC',
-          address: '0xcC90c7c3E3Ad6e4E6bd8CF4fB10D09edC20a9506', // address to transfer
+          address: DESTINATION_ADDRESS, // address to transfer
           networkId: 'e3c7fdd8-b1fc-4e51-85ae-bb276e075611', // polygon network id
         },
         {

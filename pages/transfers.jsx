@@ -25,7 +25,7 @@ const TransferPage = () => {
   const [selectedToken, setSelectedToken] = useState('');
   const [selectedNetworkId, setSelectedNetworkId] = useState('');
 
-  const { CLIENT_ID } = process.env;
+  const DESTINATION_ADDRESS = process.env.NEXT_PUBLIC_DESTINATION_ADDRESS;
   const router = useRouter();
   const handleTypeChange = (e) => setSelectedType(e.target.value);
   const handleTokenChange = (e) => setSelectedToken(e.target.value);
@@ -73,7 +73,7 @@ const TransferPage = () => {
       toAddresses: [
         {
           symbol: selectedToken, // symbol to transfer
-          address: '0xcC90c7c3E3Ad6e4E6bd8CF4fB10D09edC20a9506', // address to transfer
+          address: DESTINATION_ADDRESS, // address to transfer
           networkId: selectedNetworkId, // network id from /api/v1/transfers/managed/networks request
         },
       ],

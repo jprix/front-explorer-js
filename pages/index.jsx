@@ -15,7 +15,6 @@ const HomePage = () => {
   const [linkAnother, setLinkAnother] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [pageLoaded, setPageLoaded] = useState(false);
-  const [loadingMesh, setLoadingMesh] = useState(false);
 
   useEffect(() => {
     const authData = localStorage.getItem('authData');
@@ -56,7 +55,6 @@ const HomePage = () => {
 
   const handleCloseMeshModal = () => {
     setOpenMeshModal(false);
-    setLoadingMesh(false);
   };
 
   return (
@@ -85,7 +83,6 @@ const HomePage = () => {
             setBrokerType={setBrokerType}
             setOpenMeshModal={setOpenMeshModal}
             setLinkAnother={setLinkAnother}
-            setLoadingMesh={setLoadingMesh}
           />
         ) : null}
       </div>
@@ -99,19 +96,7 @@ const HomePage = () => {
           onExit={handleExit}
           setPageLoaded={setPageLoaded}
           pageLoaded={pageLoaded}
-          setLoadingMesh={setLoadingMesh}
         />
-      ) : null}
-
-      {loadingMesh ? (
-        <Dialog
-          open={loadingMesh}
-          onClose={() => setLoadingMesh(false)}
-          maxWidth="md"
-          fullWidth
-        >
-          <p>Loading Mesh...</p>
-        </Dialog>
       ) : null}
 
       {existingAuthData.length > 0 && (
