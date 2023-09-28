@@ -22,10 +22,11 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
   const [symbol, setSymbol] = useState('');
   const [loading, setLoading] = useState(false);
   const [assets, setAssets] = useState([]);
-  const [orderType, setOrderType] = useState('');
+  const [orderType, setOrderType] = useState('marketType');
   const [side, setSide] = useState('buy');
   const [amount, setAmount] = useState('');
   const [loadingBrokerDetails, setLoadingBrokerDetails] = useState(false);
+  const [timeInForce, setTimeInForce] = useState('GTC');
   const [paymentSymbol, setPaymentSumbol] = useState('USD');
 
   useEffect(() => {
@@ -64,15 +65,27 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
   if (brokerDetails) {
     const { cryptocurrencyOrders } = brokerDetails;
     if (cryptocurrencyOrders?.marketType.supported) {
-      dropdownOptions.push('market');
+      dropdownOptions.push('marketType');
     }
     if (cryptocurrencyOrders?.limitType.supported) {
-      dropdownOptions.push('limit');
+      dropdownOptions.push('limitType');
     }
     if (cryptocurrencyOrders?.stopLossType.supported) {
-      dropdownOptions.push('stopLoss');
+      dropdownOptions.push('stopLossType');
     }
   }
+  const getSupportedTimeInForceList = () => {
+    if (
+      brokerDetails.cryptocurrencyOrders &&
+      brokerDetails.cryptocurrencyOrders[orderType]
+    ) {
+      return brokerDetails.cryptocurrencyOrders[orderType]
+        .supportedTimeInForceList;
+    }
+    return null;
+  };
+
+  const supportedTimeInForceList = getSupportedTimeInForceList();
 
   //   const handleOpen = () => {
   //     setOpenDetails(true);
@@ -171,6 +184,23 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
                       helperText="Amount of purchase."
                       onChange={(e) => setAmount(e.target.value)}
                     />
+                  </FormControl>
+                  <FormControl fullWidth>
+                    <Typography variant="h6">Time In force</Typography>
+                    <Select
+                      required
+                      labelId="symbol-label"
+                      id="symbol"
+                      value={timeInForce}
+                      label="Select Symbol Type"
+                      onChange={(e) => setTimeInForce(e.target.value)}
+                    >
+                      {supportedTimeInForceList?.map((option, index) => (
+                        <MenuItem key={index} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </FormControl>
                   <FormControl fullWidth>
                     <Typography variant="h6">Payment Symbol</Typography>

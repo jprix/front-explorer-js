@@ -3,7 +3,6 @@ const { v4: uuidv4 } = require('uuid');
 //const defiId = uuidv4();
 
 export const getUserId = (brokerType) => {
-  console.log('hit getUserId function', brokerType);
   switch (brokerType) {
     case 'coinbase':
       return `coin${userId}`;
