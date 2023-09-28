@@ -25,8 +25,11 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
   const [orderType, setOrderType] = useState('');
   const [side, setSide] = useState('buy');
   const [amount, setAmount] = useState('');
+  const [loadingBrokerDetails, setLoadingBrokerDetails] = useState(false);
+  const [paymentSymbol, setPaymentSumbol] = useState('USD');
 
   useEffect(() => {
+    setLoadingBrokerDetails(true);
     const fetchBrokerDetails = async () => {
       try {
         const response = await fetch(
@@ -47,6 +50,7 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
         const data = await response.json();
         setBrokerDetails(data);
         setAssets(data.cryptocurrencyOrders?.supportedCryptocurrencySymbols);
+        setLoadingBrokerDetails(false);
       } catch (error) {
         console.error(error); // It's better to use console.error for logging errors
       }
@@ -91,8 +95,11 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
     >
       <DialogTitle id="transfer-details-dialog-title">Trade Form </DialogTitle>
       <DialogContent>
-        {loading ? (
-          <CircularProgress />
+        {loadingBrokerDetails ? (
+          <>
+            <p>Fetching Broker fatures</p>
+            <CircularProgress />
+          </>
         ) : (
           <div>
             <Card
@@ -161,7 +168,18 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
                       id="amount"
                       value={amount}
                       label="Amount"
+                      helperText="Amount of purchase."
                       onChange={(e) => setAmount(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormControl fullWidth>
+                    <Typography variant="h6">Payment Symbol</Typography>
+                    <TextField
+                      required
+                      id="payment-symbol"
+                      value={paymentSymbol}
+                      helperText="Symbol to use for payment, defaults to USD."
+                      onChange={(e) => setPaymentSumbol(e.target.value)}
                     />
                   </FormControl>
                   <Grid container justifyContent="flex-end" mt={2}></Grid>
@@ -170,9 +188,6 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
             </Card>
           </div>
         )}
-        <div style={{ textAlign: 'center' }}>
-          <p>This is a message</p>
-        </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">

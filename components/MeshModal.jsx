@@ -12,7 +12,6 @@ const MeshModal = ({
   onExit,
   transferFinished,
   pageLoaded,
-  setPageLoaded,
 }) => {
   const [frontConnection, setFrontConnection] = useState(null);
   const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;

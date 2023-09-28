@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
+  Avatar,
   Card,
   CardContent,
   Typography,
@@ -160,6 +161,10 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
               <Typography variant="h6" component="div">
                 Connected Broker: {data?.accessToken?.brokerName}
               </Typography>
+              <Avatar
+                alt="Broker Image"
+                src={`data:image/png;base64,${data?.accessToken?.brokerBrandInfo?.brokerLogo}`}
+              />
               <Card
                 variant="outlined"
                 style={{ marginTop: '10px', padding: '10px' }}
