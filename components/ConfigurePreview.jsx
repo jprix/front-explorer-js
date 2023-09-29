@@ -19,7 +19,6 @@ const ConfigurePreviewForm = ({
   handleInputChange,
   errorMessage,
 }) => {
-  console.log('formValues', formValues);
   const theme = useTheme();
 
   return (

@@ -1,4 +1,6 @@
-import React, { use, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+// import { MenuItem } from '@material-ui/core';
+
 import {
   Card,
   CardContent,
@@ -9,7 +11,8 @@ import {
   Select,
   Grid,
 } from '@mui/material';
-import { useTheme } from '@mui/system';
+
+import { NetworksContext } from '../context/networksContexts';
 
 const GetDepositDetails = ({
   toAuthData,
@@ -19,7 +22,63 @@ const GetDepositDetails = ({
   chain,
   errorMessage,
 }) => {
-  console.log('error state', errorMessage);
+  const { networks } = useContext(NetworksContext);
+
+  const [chains, setChains] = useState([]);
+  const [supportedTokens, setSupportedTokens] = useState([]);
+
+  console.log('chains', chains, 'updated symbol', symbol);
+
+  useEffect(() => {
+    const getSupportedTokensByType = (type) => {
+      const matchingIntegrations = networks.filter(
+        (integration) => integration.type === type
+      );
+      let result = [];
+
+      matchingIntegrations.forEach((integration) => {
+        integration.networks.forEach((network) => {
+          result = [...result, ...network.supportedTokens];
+        });
+      });
+      const uniqueSupportedTokens = Array.from(new Set(result));
+
+      setSupportedTokens(uniqueSupportedTokens);
+    };
+
+    const type = toAuthData?.accessToken?.brokerType;
+    console.log('type', type);
+    getSupportedTokensByType(type);
+  }, [toAuthData]);
+
+  const getNetworkNamesBySymbol = (selectedSymbol) => {
+    const supportedChains = new Set();
+
+    networks.forEach((integration) => {
+      integration.networks.forEach((network) => {
+        if (network.supportedTokens.includes(selectedSymbol)) {
+          const lowerCasedName =
+            network.name.charAt(0).toLowerCase() + network.name.slice(1);
+
+          supportedChains.add(lowerCasedName);
+        }
+      });
+    });
+
+    setChains([...supportedChains]);
+  };
+
+  useEffect(() => {
+    if (symbol) {
+      getNetworkNamesBySymbol(symbol);
+    }
+  }, [symbol]);
+
+  useEffect(() => {
+    if (symbol) {
+      getNetworkNamesBySymbol(symbol);
+    }
+  }, [symbol]);
 
   return (
     <div>
@@ -44,7 +103,7 @@ const GetDepositDetails = ({
                 value={
                   toAuthData?.accessToken?.brokerName || 'No destination found'
                 }
-                disabled
+                helperText="Where the funds will be sent to"
               />
             </FormControl>
             <FormControl fullWidth>
@@ -56,24 +115,35 @@ const GetDepositDetails = ({
                 value={symbol}
                 label="Symbol"
                 placeholder="eth"
-                onChange={(e) => setSymbol(e.target.value)}
+                onChange={(e) => {
+                  setSymbol(e.target.value);
+                }}
               >
-                <MenuItem value="ETH">ETH</MenuItem>
-                <MenuItem value="BTC">BTC</MenuItem>
-                <MenuItem value="LTC">LTC</MenuItem>
-                <MenuItem value="SOL">SOL</MenuItem>
-                <MenuItem value="DOGE">DOGE</MenuItem>
+                {supportedTokens.map((supportedTokens, index) => (
+                  <MenuItem key={index} value={supportedTokens}>
+                    {supportedTokens}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
-            <FormControl fullWidth>
-              <Typography variant="h6">Chain</Typography>
-              <TextField
-                required
-                id="chain"
-                value={chain}
-                onChange={(e) => setChain(e.target.value)}
-              />
-            </FormControl>
+
+            {chains.length ? (
+              <FormControl fullWidth>
+                <Typography variant="h6">Chain</Typography>
+                <Select
+                  required
+                  id="chain"
+                  value={chain.toLowerCase()}
+                  onChange={(e) => setChain(e.target.value)}
+                >
+                  {chains.map((chains, index) => (
+                    <MenuItem key={index} value={chains}>
+                      {chains}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : null}
             {errorMessage !== '' ? <p> Preview Error: {errorMessage}</p> : ''}
             <Grid container justifyContent="flex-end" mt={2}></Grid>
           </form>
