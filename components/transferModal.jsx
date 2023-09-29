@@ -163,7 +163,7 @@ const TransferModal = ({
   const [mfaCode, setMfaCode] = useState('');
   const [validAddress, setValidAddress] = useState(false);
   const [symbol, setSymbol] = useState('ETH');
-  const [chain, setChain] = useState('ethereum');
+  const [chain, setChain] = useState('');
   const router = useRouter();
 
   const [formValues, setFormValues] = useState({
