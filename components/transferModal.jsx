@@ -28,6 +28,9 @@ const Step1 = ({
   chain,
   errorMessage,
   setChain,
+  networkId,
+  setNetworkId,
+  setType,
 }) => {
   return (
     <div>
@@ -42,6 +45,9 @@ const Step1 = ({
           setChain={setChain}
           setSymbol={setSymbol}
           errorMessage={errorMessage}
+          networkId={networkId}
+          setNetworkId={setNetworkId}
+          setType={setType}
         />
       ) : (
         <div>Loading deposit address...</div>
@@ -71,6 +77,8 @@ const Step2 = ({
   loading,
   formValues,
   errorMessage,
+  networkId,
+  type,
 }) => {
   return (
     <div>
@@ -85,6 +93,8 @@ const Step2 = ({
           handleExecutePreview={handleExecutePreview}
           formValues={formValues}
           errorMessage={errorMessage}
+          networkId={networkId}
+          type={type}
         />
       ) : (
         <div>Loading preview details...</div>
@@ -164,8 +174,12 @@ const TransferModal = ({
   const [validAddress, setValidAddress] = useState(false);
   const [symbol, setSymbol] = useState('ETH');
   const [chain, setChain] = useState('');
+  const [type, setType] = useState(
+    toAuthData?.accessToken?.brokerType || 'coinbase'
+  );
   const router = useRouter();
 
+  console.log('type', type, 'toAuthData', toAuthData);
   const [formValues, setFormValues] = useState({
     fromAuthToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
     fromType: brokerAuthData?.accessToken?.brokerType,
@@ -368,6 +382,7 @@ const TransferModal = ({
             setSymbol={setSymbol}
             chain={chain}
             setChain={setChain}
+            setType={setType}
           />
         )}
         {activeStep === 2 && (
@@ -381,6 +396,8 @@ const TransferModal = ({
             formValues={formValues}
             handleInputChange={handleInputChange}
             loading={loading}
+            errorMessage={errorMessage}
+            type={type}
           />
         )}
         {activeStep === 3 && (

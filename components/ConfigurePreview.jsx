@@ -18,6 +18,7 @@ const ConfigurePreviewForm = ({
   setTransferDetails,
   handleInputChange,
   errorMessage,
+  networkId,
 }) => {
   const theme = useTheme();
 

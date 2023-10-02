@@ -158,13 +158,21 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
         <Grid item xs={12} key={index}>
           <Card>
             <CardContent>
-              <Typography variant="h6" component="div">
-                Connected Broker: {data?.accessToken?.brokerName}
-              </Typography>
-              <Avatar
-                alt="Broker Image"
-                src={`data:image/png;base64,${data?.accessToken?.brokerBrandInfo?.brokerLogo}`}
-              />
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography variant="h6" component="div">
+                  Connected Broker: {data?.accessToken?.brokerName}
+                </Typography>
+                <Avatar
+                  alt="Broker Image"
+                  src={`data:image/png;base64,${data?.accessToken?.brokerBrandInfo?.brokerLogo}`}
+                />
+              </div>
               <Card
                 variant="outlined"
                 style={{ marginTop: '10px', padding: '10px' }}

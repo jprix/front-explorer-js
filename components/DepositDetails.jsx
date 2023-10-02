@@ -1,4 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, use } from 'react';
+import { findNetworkId } from '../utils/networkId';
 // import { MenuItem } from '@material-ui/core';
 
 import {
@@ -21,18 +22,27 @@ const GetDepositDetails = ({
   setChain,
   chain,
   errorMessage,
+  setType,
+  type,
+  setNetworkId,
+  networkId,
 }) => {
   const { networks } = useContext(NetworksContext);
 
   const [chains, setChains] = useState([]);
   const [supportedTokens, setSupportedTokens] = useState([]);
 
-  console.log('chains', chains, 'updated symbol', symbol);
+  useEffect(() => {
+    console.log('Setting type:', toAuthData?.accessToken?.brokerType);
+
+    setType(toAuthData?.accessToken?.brokerType);
+  }, [toAuthData]);
 
   useEffect(() => {
     const getSupportedTokensByType = (type) => {
+      console.log('type', type, 'fetching supported tokens');
       const matchingIntegrations = networks.filter(
-        (integration) => integration.type === type
+        (integration) => integration.type === 'robinhood'
       );
       let result = [];
 
@@ -42,14 +52,12 @@ const GetDepositDetails = ({
         });
       });
       const uniqueSupportedTokens = Array.from(new Set(result));
-
+      console.log('uniqueSupportedTokens', uniqueSupportedTokens);
       setSupportedTokens(uniqueSupportedTokens);
     };
 
-    const type = toAuthData?.accessToken?.brokerType;
-    console.log('type', type);
     getSupportedTokensByType(type);
-  }, [toAuthData]);
+  }, [toAuthData]); // include type and networks in the dependency array
 
   const getNetworkNamesBySymbol = (selectedSymbol) => {
     const supportedChains = new Set();
@@ -65,14 +73,8 @@ const GetDepositDetails = ({
       });
     });
 
-    setChains([...supportedChains]);
+    setChains(['', ...supportedChains]);
   };
-
-  useEffect(() => {
-    if (symbol) {
-      getNetworkNamesBySymbol(symbol);
-    }
-  }, [symbol]);
 
   useEffect(() => {
     if (symbol) {
@@ -134,7 +136,9 @@ const GetDepositDetails = ({
                   required
                   id="chain"
                   value={chain.toLowerCase()}
-                  onChange={(e) => setChain(e.target.value)}
+                  onChange={(e) => {
+                    setChain(e.target.value);
+                  }}
                 >
                   {chains.map((chains, index) => (
                     <MenuItem key={index} value={chains}>
