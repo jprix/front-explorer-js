@@ -27,18 +27,15 @@ const TradePreviewModal = ({
   timeInForce,
   paymentSymbol,
   setTradeStage,
-  tradeStage,
-  loadingPreviewDetails,
-  setLoadingPreviewDetails,
+  loadingExecution,
+  setLoadingExecution,
 }) => {
-  const [loadingExecution, setLoadingExecution] = useState(false);
-
   const executeTrade = async () => {
     console.log('executeTrade');
     setLoadingExecution(true);
     try {
       const executeTrade = await fetch(
-        `/api/transactions/execute?brokerType=${brokerType}&side=${side}&paymentSymbol=${paymentSymbol}&symbol=${symbol}&orderType=${orderType}&timeInForce=${timeInForce}&amount=${amount}`,
+        `/api/transactions/execute?side=${side}&paymentSymbol=${paymentSymbol}&symbol=${symbol}&orderType=${orderType}&timeInForce=${timeInForce}&amount=${amount}&brokerType=${brokerType}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -49,13 +46,12 @@ const TradePreviewModal = ({
       );
       if (!executeTrade.ok) {
         setLoadingExecution(false);
-
-        throw new Error(
-          `Failed to getTradePreview: ${executeTrade.statusText}`
-        );
+        setTradeStage(1);
+        const errorResponse = await executeTrade.json();
+        alert(`Trade Failed: ${errorResponse.error}`);
+        return; // Return here to prevent further execution of the function
       }
-      const response = await executeTrade.json();
-      console.log('response', response);
+
       setTradeStage(3);
       setLoadingExecution(false);
     } catch (error) {
@@ -81,7 +77,11 @@ const TradePreviewModal = ({
               p: 2,
             }}
           >
+            {/* Added Card title */}
             <CardContent sx={{ flexGrow: 1 }}>
+              <Typography variant="h5" gutterBottom align="center">
+                Trade Preview
+              </Typography>
               <form>
                 <FormControl fullWidth>
                   <Typography variant="h6">Order Type</Typography>
@@ -145,7 +145,6 @@ const TradePreviewModal = ({
                     disabled
                     id="payment-symbol"
                     value={paymentSymbol}
-                    helperText="Symbol to use for payment, defaults to USD."
                   />
                 </FormControl>
                 <Grid container justifyContent="flex-end" mt={2}>
@@ -154,7 +153,7 @@ const TradePreviewModal = ({
                     variant="contained"
                     color="primary"
                   >
-                    Submit {symbol} {side}
+                    Place {symbol} Order
                   </Button>
                 </Grid>
               </form>

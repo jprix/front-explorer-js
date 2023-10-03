@@ -25,11 +25,13 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
   const [assets, setAssets] = useState([]);
   const [orderType, setOrderType] = useState('marketType');
   const [side, setSide] = useState('buy');
-  const [amount, setAmount] = useState(10);
+  const [amount, setAmount] = useState(1);
   const [loadingBrokerDetails, setLoadingBrokerDetails] = useState(false);
   const [timeInForce, setTimeInForce] = useState('GTC');
   const [paymentSymbol, setPaymentSumbol] = useState('USD');
   const [tradeStage, setTradeStage] = useState(1);
+  const [loadingExecution, setLoadingExecution] = useState(false);
+
   useEffect(() => {
     setLoadingBrokerDetails(true);
     const fetchBrokerDetails = async () => {
@@ -89,7 +91,6 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
   const supportedTimeInForceList = getSupportedTimeInForceList();
 
   const handleTrade = async () => {
-    console.log('handleTrade');
     setLoadingPreviewDetails(true);
     try {
       const getTradePreview = await fetch(
@@ -104,13 +105,12 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
       );
       if (!getTradePreview.ok) {
         setLoadingPreviewDetails(false);
-
-        throw new Error(
-          `Failed to getTradePreview: ${getTradePreview.statusText}`
-        );
+        const errorResponse = await getTradePreview.json();
+        alert(`Preview Failed: ${errorResponse.error}`);
+        return;
       }
-      const response = await getTradePreview.json();
-      console.log('response', response);
+      // const response = await getTradePreview.json();
+      // console.log('response', response);
       setTradeStage(2);
       setLoadingPreviewDetails(false);
     } catch (error) {
@@ -256,6 +256,8 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
 
       {tradeStage === 2 ? (
         <TradePreviewModal
+          authToken={authToken}
+          brokerType={brokerType}
           symbol={symbol}
           side={side}
           orderType={orderType}
@@ -264,9 +266,25 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
           setTradeStage={setTradeStage}
           tradeStage={tradeStage}
           paymentSymbol={paymentSymbol}
-          loadingPreviewDetails={loadingPreviewDetails}
-          setLoadingPreviewDetails={setLoadingPreviewDetails}
+          loadingExecution={loadingExecution}
+          setLoadingExecution={setLoadingExecution}
         />
+      ) : null}
+
+      {tradeStage === 3 ? (
+        // <TradeConfirmation
+        //   symbol={symbol}
+        //   side={side}
+        //   orderType={orderType}
+        //   amount={amount}
+        //   timeInForce={timeInForce}
+        //   setTradeStage={setTradeStage}
+        //   tradeStage={tradeStage}
+        //   paymentSymbol={paymentSymbol}
+        //   loadingExecution={loadingExecution}
+        //   setLoadingExecution={setLoadingExecution}
+        // />
+        <p>Trade Confirmation</p>
       ) : null}
 
       <DialogActions>

@@ -20,9 +20,9 @@ export default async function handler(req, res) {
       timeInForce: req.query.timeInForce,
     };
 
-    console.log('side ', req.query.side, 'payload', payload);
-    const tradePreview = await fetch(
-      `${MESH_API_URL}/api/v1/transactions/preview/${req.query.side}`,
+    console.log(payload);
+    const tradeExecution = await fetch(
+      `${MESH_API_URL}/api/v1/transactions/${req.query.side}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -33,15 +33,23 @@ export default async function handler(req, res) {
         body: JSON.stringify(payload),
       }
     );
-    if (!tradePreview.ok) {
-      const errorText = await tradePreview.text();
-      console.log('tradePreview not OK', errorText);
-      throw new Error(`Failed to fetch trade Previe: ${errorText}`);
+    if (!tradeExecution.ok) {
+      const errorText = await tradeExecution.text();
+      console.log('tradeExecution not OK', errorText);
+      throw new Error(`Failed to executte trade: ${errorText}`);
     }
-    const response = await tradePreview.json();
+    const response = await tradeExecution.json();
     return res.status(200).json(response.content);
   } catch (error) {
-    console.log('this was the error from Mesh', error);
-    res.status(500).json({ error: `Something went wrong: ${error.message}` });
+    console.error('Error during trade execution:', error); // Use console.error for errors
+    if (error.message.includes('Failed to execute trade')) {
+      return res
+        .status(502)
+        .json({ error: `Trade execution failed: ${error.message}` });
+    }
+
+    return res
+      .status(500)
+      .json({ error: `Internal Server Error: ${error.message}` });
   }
 }
