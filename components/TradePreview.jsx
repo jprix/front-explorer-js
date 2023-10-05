@@ -29,6 +29,7 @@ const TradePreviewModal = ({
   setTradeStage,
   loadingExecution,
   setLoadingExecution,
+  setTradeResponse,
 }) => {
   const executeTrade = async () => {
     console.log('executeTrade');
@@ -49,10 +50,13 @@ const TradePreviewModal = ({
         setTradeStage(1);
         const errorResponse = await executeTrade.json();
         alert(`Trade Failed: ${errorResponse.error}`);
-        return; // Return here to prevent further execution of the function
+        return;
       }
-
+      const response = await executeTrade.json();
+      console.log('response from executeTrade', response);
+      await setTradeResponse(response);
       setTradeStage(3);
+
       setLoadingExecution(false);
     } catch (error) {
       console.log('this was the error from Mesh', error);

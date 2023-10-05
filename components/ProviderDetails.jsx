@@ -28,6 +28,7 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   const [selectedData, setSelectedData] = useState(null);
   const [portfolioValue, setPortfolioValue] = useState({});
   const [currentDataItem, setCurrentDataItem] = useState(null);
+  const [balance, setBalance] = useState({});
 
   const updateCountdown = useCallback(() => {
     let newCountdowns = {};
@@ -54,12 +55,37 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
     return () => clearInterval(timer);
   }, [updateCountdown]);
 
+  const fetchBalance = async (data) => {
+    try {
+      const result = await fetch(
+        `/api/balances?brokerType=${data.accessToken.brokerType}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            AuthToken: data.accessToken.accountTokens[0].accessToken,
+          },
+        }
+      );
+      const balanceData = await result.json();
+      setBalance((prevValues) => ({
+        ...prevValues,
+        [data?.accessToken?.brokerName]: balanceData,
+      }));
+      console.log('balance', balance);
+    } catch {
+      console.log('error');
+    }
+  };
+
   useEffect(() => {
     existingAuthData.forEach((data) => {
+      console.log('data', data);
       fetchPortfolioValue(data);
+      fetchBalance(data);
     });
     console.log('portfolio value', portfolioValue);
-  }, []);
+  }, [existingAuthData]);
 
   const fetchPortfolioValue = async (data) => {
     try {
@@ -92,8 +118,7 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
     }
   };
   const handleTransactionDetails = useCallback((data) => {
-    console.log('getting Transaction details', data);
-    setSelectedData(data); // Set the selected data
+    setSelectedData(data);
     setOpenTransactionDetailsModal(true);
   }, []);
 
@@ -118,7 +143,6 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
 
     try {
       const result = await disconnect(payload);
-      console.log('result', result);
       if (result.status === 'ok') {
         const updatedAuthData = existingAuthData.filter(
           (data) => data !== authData
@@ -233,6 +257,7 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
                     ]?.totalValue.toFixed(2)}
                   </span>
                 </Typography>
+
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -243,6 +268,19 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
                     {portfolioValue[
                       data?.accessToken?.brokerName
                     ]?.totalPerformance.toFixed(2)}
+                  </span>
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  style={{ marginTop: '5px' }}
+                >
+                  Buying Power:
+                  <span style={{ marginLeft: '5px' }}>
+                    {
+                      balance[data?.accessToken?.brokerName]?.content
+                        ?.balances[0].buyingPower
+                    }
                   </span>
                 </Typography>
                 <div
@@ -356,6 +394,10 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
               {openTradeModal && selectedData && (
                 <TradeModal
                   open={openTradeModal}
+                  buyingPower={
+                    balance[data?.accessToken?.brokerName]?.content.balances[0]
+                      ?.buyingPower
+                  }
                   onClose={() => {
                     setOpenTradeModal(false);
                     setSelectedData(null);

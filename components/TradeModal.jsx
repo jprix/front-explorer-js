@@ -3,6 +3,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import TradePreviewModal from './TradePreview';
+import TradeConfirmation from './TradeConfirmation';
 import {
   Card,
   CardContent,
@@ -18,7 +19,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import PropTypes from 'prop-types';
 
-const TradeModal = ({ open, onClose, brokerType, authToken }) => {
+const TradeModal = ({ open, onClose, brokerType, authToken, buyingPower }) => {
   const [brokerDetails, setBrokerDetails] = useState({});
   const [symbol, setSymbol] = useState('');
   const [loadingPreviewDetails, setLoadingPreviewDetails] = useState(false);
@@ -31,6 +32,7 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
   const [paymentSymbol, setPaymentSumbol] = useState('USD');
   const [tradeStage, setTradeStage] = useState(1);
   const [loadingExecution, setLoadingExecution] = useState(false);
+  const [tradeResponse, setTradeResponse] = useState({});
 
   useEffect(() => {
     setLoadingBrokerDetails(true);
@@ -236,6 +238,7 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
                           onChange={(e) => setPaymentSumbol(e.target.value)}
                         />
                       </FormControl>
+                      <p>{buyingPower}</p>
                       <Grid container justifyContent="flex-end" mt={2}>
                         <Button
                           onClick={handleTrade}
@@ -268,23 +271,12 @@ const TradeModal = ({ open, onClose, brokerType, authToken }) => {
           paymentSymbol={paymentSymbol}
           loadingExecution={loadingExecution}
           setLoadingExecution={setLoadingExecution}
+          setTradeResponse={setTradeResponse}
         />
       ) : null}
 
-      {tradeStage === 3 ? (
-        // <TradeConfirmation
-        //   symbol={symbol}
-        //   side={side}
-        //   orderType={orderType}
-        //   amount={amount}
-        //   timeInForce={timeInForce}
-        //   setTradeStage={setTradeStage}
-        //   tradeStage={tradeStage}
-        //   paymentSymbol={paymentSymbol}
-        //   loadingExecution={loadingExecution}
-        //   setLoadingExecution={setLoadingExecution}
-        // />
-        <p>Trade Confirmation</p>
+      {tradeStage === 3 && !loadingExecution ? (
+        <TradeConfirmation tradeResponse={tradeResponse} />
       ) : null}
 
       <DialogActions>
@@ -301,6 +293,7 @@ TradeModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   brokerType: PropTypes.string.isRequired,
   authToken: PropTypes.string.isRequired,
+  buyingPower: PropTypes.number.isRequired,
 };
 
 export default TradeModal;

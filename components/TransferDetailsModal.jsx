@@ -22,7 +22,6 @@ import { TransferContext } from '../context/transferContext';
 
 const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   const [openDetails, setOpenDetails] = useState(false);
-  console.log('brokerType', brokerType);
   const {
     transferDetails,
     getTransferDetails,
@@ -40,7 +39,6 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
     const date30DaysBackTimestamp = Math.floor(
       date30DaysBackMilliseconds / 1000
     );
-    console.log(date30DaysBackTimestamp);
     const payload = {
       authToken: authToken,
       type: brokerType,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -22,7 +22,6 @@ import { TransactionContext } from 'context/transactionContext';
 
 const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
   const [openDetails, setOpenDetails] = useState(false);
-  console.log('brokerType', brokerType);
   const {
     transactionDetails,
     getTransactionsDetails,
@@ -47,12 +46,6 @@ const TransactionDetailsModal = ({ open, onClose, brokerType, authToken }) => {
       from: date30DaysBackTimestamp,
     };
 
-    console.log(
-      'received brokerType',
-      brokerType,
-      'receeuved lastTXNBrokerType',
-      lastTXNBrokerType
-    );
     const fetchTransactions = async () => {
       try {
         setLoadingTransactions(true);
