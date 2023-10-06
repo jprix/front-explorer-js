@@ -89,7 +89,7 @@ const PayPage = () => {
     localStorage.setItem('authData', JSON.stringify(updatedAuthData));
   };
 
-  const handleTransferFinished = (transferDetails) => {
+  const handleTransferFinished = () => {
     alert('Payment Success!');
     router.push('/');
   };

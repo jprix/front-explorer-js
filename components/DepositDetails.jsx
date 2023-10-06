@@ -1,7 +1,5 @@
-import React, { useContext, useState, useEffect, use } from 'react';
-import { findNetworkId } from '../utils/networkId';
-// import { MenuItem } from '@material-ui/core';
-
+import React, { useContext, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   CardContent,
@@ -24,8 +22,6 @@ const GetDepositDetails = ({
   errorMessage,
   setType,
   type,
-  setNetworkId,
-  networkId,
 }) => {
   const { networks } = useContext(NetworksContext);
 
@@ -155,6 +151,17 @@ const GetDepositDetails = ({
       </Card>
     </div>
   );
+};
+
+GetDepositDetails.propTypes = {
+  toAuthData: PropTypes?.object,
+  setSymbol: PropTypes?.func,
+  symbol: PropTypes?.string,
+  setChain: PropTypes?.func,
+  chain: PropTypes?.string,
+  errorMessage: PropTypes?.string,
+  setType: PropTypes?.func,
+  type: PropTypes?.string,
 };
 
 export default GetDepositDetails;

@@ -15,6 +15,7 @@ import TransferModal from './TransferModal';
 import TradeModal from './TradeModal';
 import PortfolioHoldings from './PortfolioHoldings';
 import { disconnect, refresh } from 'utils/connections';
+import PropTypes from 'prop-types';
 
 const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   const [countdowns, setCountdowns] = useState({});
@@ -126,8 +127,7 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   }, []);
 
   const handleTransferDetails = useCallback((data) => {
-    console.log('getting Transfer details', data);
-    setSelectedData(data); // Set the selected data
+    setSelectedData(data);
     setOpenTransferDetailsModal(true);
   }, []);
 
@@ -362,14 +362,6 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
                   >
                     <MenuItem
                       onClick={() => {
-                        handleReceive(data);
-                        handleMenuClose();
-                      }}
-                    >
-                      Receive / Deposit
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
                         handleDeposit(currentDataItem);
                         handleMenuClose();
                       }}
@@ -462,6 +454,15 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
       ))}
     </Grid>
   );
+};
+
+ProviderDetails.propTypes = {
+  existingAuthData: PropTypes.array.isRequired,
+  setExistingAuthData: PropTypes.func.isRequired,
+  openMeshModal: PropTypes.bool.isRequired,
+  setOpenMeshModal: PropTypes.func.isRequired,
+  brokerType: PropTypes.string.isRequired,
+  catalogLink: PropTypes.string.isRequired,
 };
 
 export default React.memo(ProviderDetails);

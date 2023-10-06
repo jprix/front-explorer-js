@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -56,7 +56,6 @@ const TransferDetailsModal = ({ open, onClose, brokerType, authToken }) => {
         setLoadingTransfers(false);
       }
     };
-    console.log(lastXFRBrokerType, brokerType);
     if (!transferDetails?.length || lastXFRBrokerType !== brokerType) {
       fetchTransfers();
     }

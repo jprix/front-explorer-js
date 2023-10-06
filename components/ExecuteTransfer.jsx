@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Card,
   CardContent,
@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/system';
+import PropTypes from 'prop-types';
 
 const ExecuteTransfer = ({
   brokerAuthData,
@@ -36,7 +37,6 @@ const ExecuteTransfer = ({
               disabled
               label="From Auth Token"
               value={formValues?.fromAuthToken}
-              onChange={(e) => handleInputChange('mfaCode', e.target.value)}
             />
           </FormControl>
 
@@ -46,7 +46,6 @@ const ExecuteTransfer = ({
               disabled
               label="Preview ID"
               value={transferDetails?.content.previewResult?.previewId}
-              onChange={(e) => handleInputChange('previewId', e.target.value)}
             />
             {errorMessage !== '' ? <p> Preview Error: {errorMessage}</p> : null}
           </FormControl>
@@ -67,6 +66,16 @@ const ExecuteTransfer = ({
       </CardContent>
     </Card>
   );
+};
+
+ExecuteTransfer.propTypes = {
+  brokerAuthData: PropTypes?.object,
+  transferDetails: PropTypes?.object,
+  formValues: PropTypes?.object,
+  errorMessage: PropTypes?.string,
+  setMfaCode: PropTypes?.func,
+  mfaRequired: PropTypes?.bool,
+  mfaCode: PropTypes?.string,
 };
 
 export default ExecuteTransfer;

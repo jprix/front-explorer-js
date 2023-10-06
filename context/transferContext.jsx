@@ -1,4 +1,5 @@
 import React, { useState, createContext } from 'react';
+import { PropTypes } from '@mui/material';
 
 const defaultState = {};
 
@@ -25,10 +26,8 @@ const TransferProvider = ({ children }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Throw an error if the server responded with a non-200 status code.
         setTransferDetails([]);
         setMessage(data.error || 'Something went wrong');
-        // throw new Error(data.error || 'Something went wrong', response.status);
       }
       if (response && data.content.total === 0) {
         setMessage('No records found.');
@@ -59,4 +58,7 @@ const TransferProvider = ({ children }) => {
   );
 };
 
+TransferProvider.propTypes = {
+  children: PropTypes?.node?.isRequired,
+};
 export default TransferProvider;

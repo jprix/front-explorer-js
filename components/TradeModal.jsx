@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -58,12 +58,12 @@ const TradeModal = ({ open, onClose, brokerType, authToken, buyingPower }) => {
         setAssets(data.cryptocurrencyOrders?.supportedCryptocurrencySymbols);
         setLoadingBrokerDetails(false);
       } catch (error) {
-        console.error(error); // It's better to use console.error for logging errors
+        console.error(error);
       }
     };
 
     fetchBrokerDetails();
-  }, [brokerType]); // don't forget to include your dependencies
+  }, [brokerType]);
 
   let dropdownOptions = [];
 
@@ -111,8 +111,7 @@ const TradeModal = ({ open, onClose, brokerType, authToken, buyingPower }) => {
         alert(`Preview Failed: ${errorResponse.error}`);
         return;
       }
-      // const response = await getTradePreview.json();
-      // console.log('response', response);
+
       setTradeStage(2);
       setLoadingPreviewDetails(false);
     } catch (error) {
@@ -125,7 +124,7 @@ const TradeModal = ({ open, onClose, brokerType, authToken, buyingPower }) => {
       open={open}
       onClose={onClose}
       aria-labelledby="transfer-details-dialog-title"
-      maxWidth="md" // Ensure the dialog doesn't stretch beyond screen bounds
+      maxWidth="md"
     >
       {tradeStage === 1 ? (
         <>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Dialog } from '@mui/material';
+import { Grid } from '@mui/material';
 import ProviderDetails from '../components/ProviderDetails';
 import NetworkDashboard from '../components/NetworksDashboard';
 import MeshModal from '../components/MeshModal';
@@ -95,6 +95,7 @@ const HomePage = () => {
           onExit={handleExit}
           setPageLoaded={setPageLoaded}
           pageLoaded={pageLoaded}
+          setErrorMessage={setErrorMessage}
         />
       ) : null}
 
