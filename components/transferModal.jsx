@@ -16,9 +16,7 @@ import { PropTypes } from '@mui/material';
 
 const Step1 = ({
   brokerAuthData,
-  existingAuthData,
   onStepChange,
-  setDepositAddress,
   toAuthData,
   loading,
   depositAddress,
@@ -154,6 +152,52 @@ const Step3 = ({
     </Box>
   </div>
 );
+
+Step1.propTypes = {
+  brokerAuthData: PropTypes?.object,
+  existingAuthData: PropTypes?.array,
+  onStepChange: PropTypes?.func,
+  setDepositAddress: PropTypes?.func,
+  toAuthData: PropTypes?.object,
+  loading: PropTypes?.bool,
+  depositAddress: PropTypes?.object,
+  handleGetDepositAddress: PropTypes?.func,
+  symbol: PropTypes?.string,
+  setSymbol: PropTypes?.func,
+  chain: PropTypes?.string,
+  errorMessage: PropTypes?.string,
+  setChain: PropTypes?.func,
+  networkId: PropTypes?.string,
+  setNetworkId: PropTypes?.func,
+  setType: PropTypes?.func,
+};
+
+Step2.propTypes = {
+  onStepChange: PropTypes?.func,
+  brokerAuthData: PropTypes?.object,
+  depositAddress: PropTypes?.object,
+  toAuthData: PropTypes?.object,
+  setTransferDetails: PropTypes?.func,
+  handleExecutePreview: PropTypes?.func,
+  loading: PropTypes?.bool,
+  formValues: PropTypes?.object,
+  errorMessage: PropTypes?.string,
+  networkId: PropTypes?.string,
+  type: PropTypes?.string,
+};
+
+Step3.propTypes = {
+  brokerAuthData: PropTypes?.object,
+  transferDetails: PropTypes?.object,
+  formValues: PropTypes?.object,
+  errorMessage: PropTypes?.string,
+  setMfaCode: PropTypes?.func,
+  mfaRequired: PropTypes?.bool,
+  mfaCode: PropTypes?.string,
+  depositAddress: PropTypes?.object,
+  handleExecuteTransfer: PropTypes?.func,
+  loading: PropTypes?.bool,
+};
 
 const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
   const [activeStep, setActiveStep] = useState(1);
@@ -310,7 +354,6 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
       }
 
       if (response.content.status === 'mfaRequired') {
-        console.log('mfaRequired');
         setShowMFAForm(true);
       } else {
         alert(
@@ -398,6 +441,7 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
             mfaRequired={showMFAForm}
           />
         )}
+        {!validAddress ? <p> Please enter a valid address</p> : null}
       </DialogContent>
     </Dialog>
   );
