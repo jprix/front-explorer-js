@@ -25,7 +25,6 @@ export default async function handler(req, res) {
       method: 'POST',
       body: JSON.stringify(payload),
     });
-    console.log('response from mesh', response);
     if (!response.ok) {
       const errorText = await response.json();
       const errorMessage = `Failed to fetch Balances. Status: ${errorText} - ${response.statusText}. Message: ${response.message}`;

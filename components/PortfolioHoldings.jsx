@@ -11,12 +11,11 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  Typography,
-  Grid,
   DialogTitle,
   DialogActions,
 } from '@mui/material';
 import { getUserId } from '../utils/UserId';
+import { PropTypes } from '@mui/material';
 
 const PortfolioHoldings = ({ brokerType, existingAuthData }) => {
   const [portfolioHoldings, setPortfolioHoldings] = useState([]);
@@ -211,6 +210,11 @@ const PortfolioHoldings = ({ brokerType, existingAuthData }) => {
       )}
     </>
   );
+};
+
+PortfolioHoldings.propTypes = {
+  brokerType: PropTypes?.string.isRequired,
+  existingAuthData: PropTypes?.array.isRequired,
 };
 
 export default PortfolioHoldings;

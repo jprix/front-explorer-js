@@ -38,8 +38,7 @@ const ChooseProvider = ({
           setNetworks(data.content.integrations);
         }
       } catch (error) {
-        console.error('An error occurred:', error.message);
-        setErrorMessage('Error fetching data.'); // Set the error message here
+        setErrorMessage('Error fetching data. ', error.message);
       } finally {
         setLoading(false);
       }

@@ -38,7 +38,6 @@ const TransferProvider = ({ children }) => {
       }
     } catch (error) {
       setMessage(error);
-      console.log('this was the token error', error);
     } finally {
       setLoadingTransfers(false);
     }

@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
+import React from 'react';
+
 import {
   Card,
   CardContent,
@@ -10,14 +8,11 @@ import {
   Grid,
   TextField,
 } from '@mui/material';
-import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import PropTypes from 'prop-types';
 
 const TradePreviewModal = ({
-  open,
-  onClose,
   brokerType,
   authToken,
   symbol,
@@ -32,7 +27,6 @@ const TradePreviewModal = ({
   setTradeResponse,
 }) => {
   const executeTrade = async () => {
-    console.log('executeTrade');
     setLoadingExecution(true);
     try {
       const executeTrade = await fetch(
@@ -53,7 +47,6 @@ const TradePreviewModal = ({
         return;
       }
       const response = await executeTrade.json();
-      console.log('response from executeTrade', response);
       await setTradeResponse(response);
       setTradeStage(3);
 
@@ -174,6 +167,16 @@ TradePreviewModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   brokerType: PropTypes.string.isRequired,
   authToken: PropTypes.string.isRequired,
+  symbol: PropTypes.string.isRequired,
+  side: PropTypes.string.isRequired,
+  orderType: PropTypes.string.isRequired,
+  amount: PropTypes.string.isRequired,
+  timeInForce: PropTypes.string.isRequired,
+  paymentSymbol: PropTypes.string.isRequired,
+  setTradeStage: PropTypes.func.isRequired,
+  loadingExecution: PropTypes.bool.isRequired,
+  setLoadingExecution: PropTypes.func.isRequired,
+  setTradeResponse: PropTypes.func.isRequired,
 };
 
 export default TradePreviewModal;

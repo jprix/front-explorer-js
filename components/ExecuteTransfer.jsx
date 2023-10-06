@@ -19,8 +19,6 @@ const ExecuteTransfer = ({
 }) => {
   const theme = useTheme();
 
-  console.log('error state', errorMessage);
-
   return (
     <Card>
       <CardContent>

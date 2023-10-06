@@ -72,7 +72,6 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
         ...prevValues,
         [data?.accessToken?.brokerName]: balanceData,
       }));
-      console.log('balance', balance);
     } catch {
       console.log('error');
     }
@@ -80,7 +79,6 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
 
   useEffect(() => {
     existingAuthData.forEach((data) => {
-      console.log('data', data);
       fetchPortfolioValue(data);
       fetchBalance(data);
     });
@@ -123,7 +121,6 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   }, []);
 
   const handleTrade = useCallback((data) => {
-    console.log('getting Trade details', data);
     setSelectedData(data);
     setOpenTradeModal(true);
   }, []);
@@ -135,7 +132,6 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   }, []);
 
   const handleDisconnect = async (authData) => {
-    console.log('disconnecting', authData);
     const payload = {
       type: authData.accessToken.brokerType,
       authToken: authData.accessToken.accountTokens[0].accessToken,
@@ -167,11 +163,8 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
     try {
       const result = await refresh(payload);
       if (result.status === 'ok') {
-        // Map through existingAuthData to replace the old authData with the new data from result
         const updatedAuthData = existingAuthData.map((data) => {
           if (data === authData) {
-            // Assuming this is the correct condition to identify the right token to replace
-
             const newExpiryTimestamp =
               new Date().getTime() + result.content.expiresInSeconds * 1000;
 
@@ -204,7 +197,6 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   };
 
   const handleDeposit = async (brokerAuth) => {
-    console.log('depositing', brokerAuth);
     setDepositAuthData(brokerAuth);
     setOpenTransactionModal(true);
   };

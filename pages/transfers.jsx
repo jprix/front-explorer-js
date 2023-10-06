@@ -37,7 +37,6 @@ const TransferPage = () => {
         const response = await fetch(`/api/networks`);
 
         if (!response.ok) {
-          // If the server responded with an error, throw it so that it can be caught in the catch block
           throw new Error(data.error || 'Something went wrong');
         }
 
@@ -49,7 +48,6 @@ const TransferPage = () => {
           setNetworks(data.content.integrations);
         }
       } catch (error) {
-        console.error('An error occurred:', error.message);
         setErrorMessage('Error fetching data.'); // Set the error message here
       } finally {
         setLoading(false);
@@ -91,8 +89,7 @@ const TransferPage = () => {
   };
 
   const handleTransferFinished = (transferDetails) => {
-    console.log('transferDetails', transferDetails);
-    alert('Transfer Success!');
+    alert('Transfer Success!', transferDetails);
     router.push('/');
   };
 

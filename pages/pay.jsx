@@ -18,21 +18,19 @@ const PayPage = () => {
   const [openMeshModal, setOpenMeshModal] = useState(false);
   const [existingAuthData, setExistingAuthData] = useState([]);
   const [networks, setNetworks] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [errorMessage, setErrorMessage] = useState(''); // Use to store messages like "No records found" or "Error fetching data"
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
   const [brokerType, setBrokerType] = useState('');
   const router = useRouter();
 
   const DESTINATION_ADDRESS = process.env.NEXT_PUBLIC_DESTINATION_ADDRESS;
 
-  console.log('destination address', DESTINATION_ADDRESS);
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
         const response = await fetch(`/api/networks`);
 
         if (!response.ok) {
-          // If the server responded with an error, throw it so that it can be caught in the catch block
           throw new Error(data.error || 'Something went wrong');
         }
 
@@ -45,7 +43,7 @@ const PayPage = () => {
         }
       } catch (error) {
         console.error('An error occurred:', error.message);
-        setErrorMessage('Error fetching data.'); // Set the error message here
+        setErrorMessage('Error fetching data.');
       } finally {
         setLoading(false);
       }
@@ -68,7 +66,7 @@ const PayPage = () => {
       toAddresses: [
         {
           symbol: 'USDC',
-          address: DESTINATION_ADDRESS, // address to transfer
+          address: DESTINATION_ADDRESS,
           networkId: 'e3c7fdd8-b1fc-4e51-85ae-bb276e075611', // polygon network id
         },
         {
@@ -92,7 +90,6 @@ const PayPage = () => {
   };
 
   const handleTransferFinished = (transferDetails) => {
-    console.log('transferDetails', transferDetails);
     alert('Payment Success!');
     router.push('/');
   };
@@ -137,7 +134,6 @@ const PayPage = () => {
           variant="contained"
           color="secondary"
           brokerType={brokerType}
-          //getCatalogLink={getCatalogLink}
           setBrokerType={setBrokerType}
         />
       ) : !loading && networks.length ? (

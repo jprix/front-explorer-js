@@ -26,12 +26,6 @@ const MeshModal = ({
         },
         onEvent: (event) => {
           console.info('FRONT EVENT', event);
-
-          // if (event.type === 'pageLoaded') {
-          //   console.log('page loaded');
-          //   setLoadingMesh(false);
-          //   setPageLoaded(true);
-          // }
         },
 
         onExit: (error) => {

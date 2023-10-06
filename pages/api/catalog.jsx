@@ -3,7 +3,6 @@ export default async function handler(req, res) {
   const { symbol, BrokerType, UserId } = req.query;
   const { transferOptions, amountInFiat } = req.body;
 
-  console.log('final broker type, ', req.query);
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -23,7 +22,6 @@ export default async function handler(req, res) {
   if (amountInFiat) bodyObject.amountInFiat = amountInFiat;
   if (symbol) bodyObject.symbol = symbol;
 
-  console.log('bodyObject', bodyObject);
   const options = {
     headers: {
       'Content-Type': 'application/json',
@@ -50,7 +48,6 @@ export default async function handler(req, res) {
 
     return res.status(200).json(response);
   } catch (error) {
-    console.log('Error from Mesh:', error);
     res.status(500).json({ error: `Something went wrong: ${error.message}` });
   }
 }

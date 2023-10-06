@@ -3,8 +3,7 @@ import { Card, CardContent, Typography, Grid } from '@mui/material';
 
 import PropTypes from 'prop-types';
 
-const TradeConfirmation = ({ open, onClose, tradeResponse }) => {
-  console.log('tradeResponse', tradeResponse);
+const TradeConfirmation = ({ tradeResponse }) => {
   return (
     <div>
       <Card

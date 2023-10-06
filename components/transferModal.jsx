@@ -8,11 +8,11 @@ import {
   Button,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useTheme } from '@mui/material/styles';
 import ConfigurePreviewForm from './ConfigurePreview';
 import ExecuteTransfer from './ExecuteTransfer';
 import GetDepositDetails from './DepositDetails';
 import { useRouter } from 'next/router';
+import { PropTypes } from '@mui/material';
 
 const Step1 = ({
   brokerAuthData,
@@ -155,14 +155,7 @@ const Step3 = ({
   </div>
 );
 
-const TransferModal = ({
-  open,
-  onClose,
-  brokerAuthData,
-  existingAuthData,
-  onStepChange,
-}) => {
-  const theme = useTheme();
+const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
   const [activeStep, setActiveStep] = useState(1);
   const [depositAddress, setDepositAddress] = useState({});
   const [toAuthData, setToAuthData] = useState(null);
@@ -179,7 +172,6 @@ const TransferModal = ({
   );
   const router = useRouter();
 
-  console.log('type', type, 'toAuthData', toAuthData);
   const [formValues, setFormValues] = useState({
     fromAuthToken: brokerAuthData?.accessToken?.accountTokens[0]?.accessToken,
     fromType: brokerAuthData?.accessToken?.brokerType,
@@ -211,7 +203,6 @@ const TransferModal = ({
       );
       if (destinationAuthData) {
         setToAuthData(destinationAuthData);
-        console.log('toAuthData', destinationAuthData);
       } else {
         console.log('No matching object found.');
       }
@@ -219,11 +210,6 @@ const TransferModal = ({
       console.log('only one object');
     }
   }, [existingAuthData, brokerAuthData, toAuthData]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('submitting form');
-  };
 
   const handleGetDepositAddress = async () => {
     setLoading(true);
@@ -246,15 +232,12 @@ const TransferModal = ({
       const response = await generateAddress.json();
 
       if (!generateAddress.ok) {
-        console.log('generateAddress not OK', response.error);
         setErrorMesage(response.error);
-        console.log('error message updated ', response.error);
         throw new Error(
           `Failed to Generate Address: ${generateAddress.statusText}`
         );
       }
 
-      console.log('response', response);
       setDepositAddress(response.content);
       setValidAddress(true);
 
@@ -262,7 +245,7 @@ const TransferModal = ({
     } catch (error) {
       console.error('An error occurred:', error.message);
     } finally {
-      setLoading(false); // Set loading back to false after the request is completed
+      setLoading(false);
     }
   };
 
@@ -418,6 +401,26 @@ const TransferModal = ({
       </DialogContent>
     </Dialog>
   );
+};
+
+TransferModal.propTypes = {
+  open: PropTypes?.bool,
+  onClose: PropTypes?.func,
+  brokerAuthData: PropTypes?.object,
+  existingAuthData: PropTypes?.array,
+  setDepositAddress: PropTypes?.func,
+  toAuthData: PropTypes?.object,
+  loading: PropTypes?.bool,
+  depositAddress: PropTypes?.object,
+  handleGetDepositAddress: PropTypes?.func,
+  symbol: PropTypes?.string,
+  setSymbol: PropTypes?.func,
+  chain: PropTypes?.string,
+  errorMessage: PropTypes?.string,
+  setChain: PropTypes?.func,
+  networkId: PropTypes?.string,
+  setNetworkId: PropTypes?.func,
+  setType: PropTypes?.func,
 };
 
 export default TransferModal;
