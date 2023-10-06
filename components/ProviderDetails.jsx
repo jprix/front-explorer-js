@@ -14,7 +14,7 @@ import TransferDetailsModal from './TransferDetailsModal';
 import TransferModal from './TransferModal';
 import TradeModal from './TradeModal';
 import PortfolioHoldings from './PortfolioHoldings';
-import { disconnect } from 'utils/disconnect';
+import { disconnect, refresh } from 'utils/connections';
 
 const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   const [countdowns, setCountdowns] = useState({});
@@ -157,8 +157,50 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
     }
   };
 
-  const handleReceive = async (data) => {
-    console.log('receiving', data);
+  const handleRefresh = async (authData) => {
+    console.log('refreshing', authData);
+    const payload = {
+      type: authData.accessToken.brokerType,
+      refreshToken: authData.accessToken.accountTokens[0].refreshToken,
+    };
+
+    try {
+      const result = await refresh(payload);
+      if (result.status === 'ok') {
+        // Map through existingAuthData to replace the old authData with the new data from result
+        const updatedAuthData = existingAuthData.map((data) => {
+          if (data === authData) {
+            // Assuming this is the correct condition to identify the right token to replace
+
+            const newExpiryTimestamp =
+              new Date().getTime() + result.content.expiresInSeconds * 1000;
+
+            return {
+              ...data,
+              expiresInSeconds: result.content.expiresInSeconds,
+              accessToken: {
+                ...data.accessToken,
+                expiryTimestamp: newExpiryTimestamp, // Set the new expiryTimestamp here
+                accountTokens: data.accessToken.accountTokens.map((token) => ({
+                  ...token,
+                  accessToken: result.content.accessToken,
+                  refreshToken: result.content.refreshToken,
+                })),
+                expiresInSeconds: result.content.expiresInSeconds,
+              },
+            };
+          }
+          return data; // Return unmodified data for other items
+        });
+
+        setExistingAuthData(updatedAuthData);
+        localStorage.setItem('authData', JSON.stringify(updatedAuthData[0]));
+
+        alert('refreshed token successfully');
+      }
+    } catch (error) {
+      alert('Error while refreshing', error);
+    }
   };
 
   const handleDeposit = async (brokerAuth) => {
@@ -230,7 +272,17 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
                 >
                   <Button
                     variant="contained"
+                    color="primary"
+                    style={{ marginTop: '20px', marginLeft: '10px' }}
+                    size="small"
+                    onClick={() => handleRefresh(data)}
+                  >
+                    Refresh Token
+                  </Button>
+                  <Button
+                    variant="contained"
                     color="secondary"
+                    style={{ marginTop: '20px', marginLeft: '10px' }}
                     size="small"
                     onClick={() => handleDisconnect(data)}
                   >

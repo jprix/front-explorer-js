@@ -1,6 +1,4 @@
 const userId = process.env.NEXT_PUBLIC_USER_ID;
-const { v4: uuidv4 } = require('uuid');
-//const defiId = uuidv4();
 
 export const getUserId = (brokerType) => {
   switch (brokerType) {

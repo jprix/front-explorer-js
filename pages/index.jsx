@@ -20,7 +20,6 @@ const HomePage = () => {
     const authData = localStorage.getItem('authData');
     setExistingAuthData(authData ? JSON.parse(authData) : []);
     if (existingAuthData.length <= 1) {
-      console.log('allow another link');
       setConnectAnotherAccount(true);
     } else {
       setConnectAnotherAccount(false);
