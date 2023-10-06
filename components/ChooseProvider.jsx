@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCatalogLink } from 'utils/getCatalogLink';
+import { PropTypes } from '@mui/material';
 
 import {
   Button,
@@ -141,4 +142,11 @@ const ChooseProvider = ({
   );
 };
 
+ChooseProvider.propTypes = {
+  setCatalogLink: PropTypes?.func,
+  brokerType: PropTypes?.string,
+  setOpenMeshModal: PropTypes?.func,
+  setBrokerType: PropTypes?.func,
+  setLinkAnother: PropTypes?.func,
+};
 export default ChooseProvider;

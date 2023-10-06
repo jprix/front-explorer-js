@@ -173,7 +173,7 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
               expiresInSeconds: result.content.expiresInSeconds,
               accessToken: {
                 ...data.accessToken,
-                expiryTimestamp: newExpiryTimestamp, // Set the new expiryTimestamp here
+                expiryTimestamp: newExpiryTimestamp,
                 accountTokens: data.accessToken.accountTokens.map((token) => ({
                   ...token,
                   accessToken: result.content.accessToken,
@@ -183,7 +183,7 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
               },
             };
           }
-          return data; // Return unmodified data for other items
+          return data;
         });
 
         setExistingAuthData(updatedAuthData);
@@ -262,15 +262,19 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
                     marginTop: '10px',
                   }}
                 >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    style={{ marginTop: '20px', marginLeft: '10px' }}
-                    size="small"
-                    onClick={() => handleRefresh(data)}
-                  >
-                    Refresh Token
-                  </Button>
+                  {data?.accessToken.accountTokens[0].refreshToken ? (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        style={{ marginTop: '20px', marginLeft: '10px' }}
+                        size="small"
+                        onClick={() => handleRefresh(data)}
+                      >
+                        Refresh Token
+                      </Button>
+                    </>
+                  ) : null}
                   <Button
                     variant="contained"
                     color="secondary"
