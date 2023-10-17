@@ -1,3 +1,5 @@
+import { FrontApi } from '@front-finance/api';
+
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
 
@@ -7,28 +9,23 @@ export default async function handler(req, res) {
 
   const payload = req.body;
 
+  const api = new FrontApi({
+    baseURL: MESH_API_URL,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Client-Id': CLIENT_ID,
+      'X-Client-Secret': PROD_API_KEY,
+    },
+  });
+
   try {
-    const fetchTransfers = await fetch(
-      `${MESH_API_URL}/api/v1/transfers/list`,
-      {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Client-Id': CLIENT_ID,
-          'X-Client-Secret': PROD_API_KEY,
-        },
-      }
-    );
-    if (!fetchTransfers.ok) {
-      const responseBody = await fetchTransfers.json();
-      console.error('Error response from Mesh API:', responseBody);
-      const errorMessage = `Failed to Fetch Transfer details. Status: ${fetchTransfers.status} - ${fetchTransfers.statusText}. Message: ${responseBody.message}`;
+    const fetchTransfers = await api.transfers.v1TransfersListCreate(payload);
+
+    if (fetchTransfers.status !== 200) {
+      const errorMessage = `Failed to Fetch Transfer details. Status: ${fetchTransfers.status} - ${fetchTransfers.statusText}. Message: ${fetchTransfers.message}`;
       throw new Error(`Failed to Fetch Transfer details: ${errorMessage}`);
     }
-    console.log('fetchTransfers', fetchTransfers);
-    const response = await fetchTransfers.json();
-    return res.status(200).json(response);
+    return res.status(200).json(fetchTransfers.data);
   } catch (error) {
     console.log('this was the error from Mesh', error);
     res.status(500).json({
