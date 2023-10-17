@@ -1,3 +1,4 @@
+import { FrontApi } from '@front-finance/api';
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
   const { symbol, BrokerType, UserId } = req.query;
@@ -15,38 +16,31 @@ export default async function handler(req, res) {
     bodyObject.BrokerType = BrokerType;
   }
 
-  // Conditionally add other properties to the bodyObject
   if (transferOptions && Object.keys(transferOptions).length > 0) {
     bodyObject.transferOptions = transferOptions;
   }
   if (amountInFiat) bodyObject.amountInFiat = amountInFiat;
   if (symbol) bodyObject.symbol = symbol;
 
-  const options = {
+  const api = new FrontApi({
+    baseURL: MESH_API_URL,
     headers: {
       'Content-Type': 'application/json',
       'X-Client-Id': CLIENT_ID,
       'X-Client-Secret': PROD_API_KEY,
     },
-    body: JSON.stringify(bodyObject),
-    method: 'POST',
-  };
+  });
 
   try {
-    const getCatalogLink = await fetch(
-      `${MESH_API_URL}/api/v1/linkToken`,
-      options
-    );
+    const getCatalogLink =
+      await api.managedAccountAuthentication.v1LinktokenCreate(bodyObject);
 
-    if (!getCatalogLink.ok) {
-      const responseBody = await getCatalogLink.json();
-      const errorMessage = `Failed to retrieve or generate catalogLink. Status: ${getCatalogLink.status} - ${getCatalogLink.statusText}. Message: ${responseBody.message}`;
+    if (getCatalogLink.status !== 200) {
+      const errorMessage = `Failed to retrieve or generate catalogLink. Status: ${getCatalogLink.status} - ${getCatalogLink.statusText}. Message: ${getCatalogLink.message}`;
       throw new Error(errorMessage);
     }
 
-    const response = await getCatalogLink.json();
-
-    return res.status(200).json(response);
+    return res.status(200).json(getCatalogLink.data);
   } catch (error) {
     res.status(500).json({ error: `Something went wrong: ${error.message}` });
   }
