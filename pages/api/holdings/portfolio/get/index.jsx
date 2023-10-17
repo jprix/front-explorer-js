@@ -1,4 +1,5 @@
 import { getUserId } from '../../../../../utils/UserId';
+import { FrontApi } from '@front-finance/api';
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
 
@@ -10,35 +11,31 @@ export default async function handler(req, res) {
 
   const authToken = req.headers['authtoken'];
   const { brokerType } = req.query;
-  const userId = getUserId(brokerType);
 
   const payload = {
     AuthToken: authToken,
     Type: brokerType,
   };
 
-  console.log('outbound payload', payload, userId);
+  const api = new FrontApi({
+    baseURL: MESH_API_URL,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Client-Id': CLIENT_ID,
+      'X-Client-Secret': PROD_API_KEY,
+    },
+  });
+
   try {
-    const response = await fetch(`${MESH_API_URL}/api/v1/holdings/get`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Client-Id': CLIENT_ID,
-        'X-Client-Secret': PROD_API_KEY,
-      },
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-    console.log('response from mesh', response);
-    if (!response.ok) {
-      const responseBody = await response.json();
-      const errorMessage = `Failed to fetch Portfolio Holdings. Status: ${response.status} - ${response.statusText}. Message: ${response.message}`;
+    const response = await api.portfolio.v1HoldingsGetCreate(payload);
+
+    if (response.status !== 200) {
+      const errorMessage = `Failed to fetch Portfolio Holdings. Status: ${response.status} - ${response.statusText}. Message: ${response.data.message}`;
       throw new Error(errorMessage);
     }
 
-    const responseData = await response.json();
-    return res.status(200).json(responseData);
+    return res.status(200).json(response.data);
   } catch (error) {
-    console.error('Error from Mesh:', error);
     res
       .status(500)
       .json({ error: `An internal server error occurred: ${error.message}` });

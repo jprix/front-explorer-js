@@ -13,7 +13,6 @@ export default async function handler(req, res) {
   console.log('outbound userId', userId);
   try {
     const response = await fetch(
-      //portfolio?UserId=coin766779
       `${MESH_API_URL}/api/v1/holdings/portfolio?UserId=${userId}`,
       {
         headers: {
@@ -24,10 +23,9 @@ export default async function handler(req, res) {
         method: 'GET',
       }
     );
-    console.log('response from mesh', response.status);
     if (!response.ok) {
       const responseBody = await response.json();
-      const errorMessage = `Failed to fetch Portfolio Holdings. Status: ${response.status} - ${response.statusText}. Message: ${response.message}`;
+      const errorMessage = `Failed to fetch Portfolio Holdings. Status: ${responseBody.status} - ${responseBody.statusText}. Message: ${responseBody.message}`;
       throw new Error(errorMessage);
     }
 
