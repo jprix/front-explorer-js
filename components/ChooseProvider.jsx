@@ -130,7 +130,7 @@ const ChooseProvider = ({
             size="small"
             color="tertiary"
             onClick={() => setLinkAnother(false)}
-            sx={{ paddingLeft: '10px' }}
+            sx={{ marginLeft: '10px' }}
           >
             Cancel
           </Button>
