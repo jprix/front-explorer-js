@@ -1,6 +1,6 @@
+import { FrontApi } from '@front-finance/api';
 export default async function handler(req, res) {
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
-  console.log('*** ', req.method, req.body); // log the request method and body
 
   const payload = req.body;
 
@@ -10,26 +10,24 @@ export default async function handler(req, res) {
       .json({ error: 'Method not allowed. Please use POST method.' });
   }
 
+  const api = new FrontApi({
+    baseURL: MESH_API_URL,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Client-Id': CLIENT_ID,
+      'X-Client-Secret': PROD_API_KEY,
+    },
+  });
   try {
-    const depositAddress = await fetch(
-      `${MESH_API_URL}/api/v1/transfers/address/get`,
-      {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Client-Id': CLIENT_ID,
-          'X-Client-Secret': PROD_API_KEY,
-        },
-      }
-    );
-    if (!depositAddress.ok) {
-      const responseBody = await depositAddress.json();
-      const errorMessage = `Failed to retrieve or generate a deposit address. Status: ${depositAddress.status} - ${depositAddress.statusText}. Message: ${responseBody.message}`;
+    const depositAddress =
+      await api.transfers.v1TransfersAddressGetCreate(payload);
+
+    if (depositAddress.status !== 200) {
+      console.error('Error from Mesh:', depositAddress);
+      const errorMessage = `Failed to retrieve or generate a deposit address. Status: ${depositAddress.status} - ${depositAddress.statusText}. Message: ${depositAddress.message}`;
       return res.status(500).json({ error: errorMessage });
     }
-    const response = await depositAddress.json();
-    return res.status(200).json(response);
+    return res.status(200).json(depositAddress.data);
   } catch (error) {
     console.error('Error from Mesh:', error);
     res
