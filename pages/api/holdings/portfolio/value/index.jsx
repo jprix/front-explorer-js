@@ -1,4 +1,3 @@
-import { getUserId } from '../../../../../utils/UserId';
 import { FrontApi } from '@front-finance/api';
 
 export default async function handler(req, res) {
@@ -12,7 +11,6 @@ export default async function handler(req, res) {
 
   const authToken = req.headers['authtoken'];
   const { brokerType } = req.query;
-  const userId = getUserId(brokerType);
 
   const payload = {
     AuthToken: authToken,
