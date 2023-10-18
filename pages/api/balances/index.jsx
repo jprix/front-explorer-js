@@ -28,17 +28,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await api.balance.v1BalanceGetCreate(payload);
-    // const response = await fetch(`${MESH_API_URL}/api/v1/balance/get`, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'X-Client-Id': CLIENT_ID,
-    //     'X-Client-Secret': PROD_API_KEY,
-    //   },
-    //   method: 'POST',
-    //   body: JSON.stringify(payload),
-    // });
 
-    console.log('response', response.data);
     if (response.status !== 200) {
       const errorMessage = `Failed to fetch Balances. Status: ${response} - ${response.statusText}. Message: ${response.message}`;
       throw new Error(errorMessage);

@@ -1,4 +1,5 @@
 import React, { useState, createContext } from 'react';
+import { PropTypes } from '@mui/material';
 
 const defaultState = {};
 
@@ -58,6 +59,10 @@ const TransactionProvider = ({ children }) => {
       {children}
     </TransactionContext.Provider>
   );
+};
+
+TransactionProvider.propTypes = {
+  children: PropTypes?.node.isRequired,
 };
 
 export default TransactionProvider;
