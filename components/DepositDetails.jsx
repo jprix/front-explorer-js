@@ -15,10 +15,11 @@ import { NetworksContext } from '../context/networksContexts';
 
 const GetDepositDetails = ({
   toAuthData,
-  setSymbol,
   symbol,
   setChain,
   chain,
+  formValues,
+  handleInputChange,
   errorMessage,
   setType,
   type,
@@ -110,12 +111,9 @@ const GetDepositDetails = ({
                 required
                 labelId="symbol-label"
                 id="symbol"
-                value={symbol}
+                value={formValues.symbol}
                 label="Symbol"
-                placeholder="eth"
-                onChange={(e) => {
-                  setSymbol(e.target.value);
-                }}
+                onChange={(e) => handleInputChange('symbol', e.target.value)}
               >
                 {supportedTokens.map((supportedTokens, index) => (
                   <MenuItem key={index} value={supportedTokens}>
@@ -162,6 +160,8 @@ GetDepositDetails.propTypes = {
   errorMessage: PropTypes?.string,
   setType: PropTypes?.func,
   type: PropTypes?.string,
+  handleInputChange: PropTypes?.func,
+  formValues: PropTypes?.object,
 };
 
 export default GetDepositDetails;

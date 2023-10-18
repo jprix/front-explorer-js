@@ -21,6 +21,8 @@ const Step1 = ({
   loading,
   depositAddress,
   handleGetDepositAddress,
+  formValues,
+  handleInputChange,
   symbol,
   setSymbol,
   chain,
@@ -38,7 +40,9 @@ const Step1 = ({
           depositAddress={depositAddress}
           toAuthData={toAuthData}
           onStepChange={onStepChange}
+          handleInputChange={handleInputChange}
           symbol={symbol}
+          formValues={formValues}
           chain={chain}
           setChain={setChain}
           setSymbol={setSymbol}
@@ -72,6 +76,7 @@ const Step2 = ({
   toAuthData,
   setTransferDetails,
   handleExecutePreview,
+  handleInputChange,
   loading,
   formValues,
   errorMessage,
@@ -89,6 +94,7 @@ const Step2 = ({
           onStepChange={onStepChange}
           setTransferDetails={setTransferDetails}
           handleExecutePreview={handleExecutePreview}
+          handleInputChange={handleInputChange}
           formValues={formValues}
           errorMessage={errorMessage}
           networkId={networkId}
@@ -161,7 +167,9 @@ Step1.propTypes = {
   toAuthData: PropTypes?.object,
   loading: PropTypes?.bool,
   depositAddress: PropTypes?.object,
+  formValues: PropTypes?.object,
   handleGetDepositAddress: PropTypes?.func,
+  handleInputChange: PropTypes?.func,
   symbol: PropTypes?.string,
   setSymbol: PropTypes?.func,
   chain: PropTypes?.string,
@@ -179,6 +187,7 @@ Step2.propTypes = {
   toAuthData: PropTypes?.object,
   setTransferDetails: PropTypes?.func,
   handleExecutePreview: PropTypes?.func,
+  handleInputChange: PropTypes?.func,
   loading: PropTypes?.bool,
   formValues: PropTypes?.object,
   errorMessage: PropTypes?.string,
@@ -337,7 +346,6 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
     };
 
     try {
-      console.log(errorMessage);
       const executeTransfer = await fetch('/api/transfers/execute', {
         method: 'POST',
         headers: {
@@ -401,9 +409,11 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
             onStepChange={() => handleStepChange(2)}
             setDepositAddress={setDepositAddress}
             handleGetDepositAddress={handleGetDepositAddress}
+            handleInputChange={handleInputChange}
             setToAuthData={setToAuthData}
             loading={loading}
             toAuthData={toAuthData}
+            formValues={formValues}
             symbol={symbol}
             setSymbol={setSymbol}
             chain={chain}

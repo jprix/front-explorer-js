@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   CardContent,
   FormControl,
-  MenuItem,
   TextField,
   Typography,
 } from '@mui/material';
@@ -14,11 +14,8 @@ const ConfigurePreviewForm = ({
   formValues,
   toAuthData,
   depositAddress,
-  onStepChange,
-  setTransferDetails,
   handleInputChange,
   errorMessage,
-  networkId,
 }) => {
   const theme = useTheme();
 
@@ -111,6 +108,18 @@ const ConfigurePreviewForm = ({
       </CardContent>
     </Card>
   );
+};
+
+ConfigurePreviewForm.propTypes = {
+  brokerAuthData: PropTypes.object.isRequired,
+  formValues: PropTypes.object.isRequired,
+  toAuthData: PropTypes.object.isRequired,
+  depositAddress: PropTypes.object.isRequired,
+  onStepChange: PropTypes.func.isRequired,
+  setTransferDetails: PropTypes.func.isRequired,
+  handleInputChange: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  networkId: PropTypes.string.isRequired,
 };
 
 export default ConfigurePreviewForm;
