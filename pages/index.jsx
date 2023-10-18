@@ -30,7 +30,6 @@ const HomePage = () => {
     localStorage.setItem('authData', JSON.stringify(existingAuthData));
   }, [existingAuthData]);
 
-  console.log('error message', errorMessage);
   const handleSuccess = (newAuthData) => {
     newAuthData.linkedAccount = false;
 
