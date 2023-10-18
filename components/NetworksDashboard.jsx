@@ -23,7 +23,7 @@ function NetworkDashboard() {
   } = useContext(NetworksContext);
   const [tab, setTab] = useState(0);
   const [page, setPage] = useState(0);
-  const [showTable, setShowTable] = useState(false); // state variable to control table visibility
+  const [showTable, setShowTable] = useState(false);
 
   useEffect(() => {
     const fetchNetworks = async () => {
