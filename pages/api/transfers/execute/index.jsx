@@ -22,8 +22,6 @@ export default async function handler(req, res) {
     const executeTransfer =
       await api.managedTransfers.v1TransfersManagedExecuteCreate(payload);
 
-    console.log('Execute transfer response:', executeTransfer);
-
     if (!executeTransfer || executeTransfer.status !== 200) {
       const errorMessage =
         executeTransfer?.statusText || 'Unknown error occurred';
@@ -33,18 +31,12 @@ export default async function handler(req, res) {
     }
     return res.status(200).json(executeTransfer.data);
   } catch (error) {
-    console.error('Error executing transfer:', error);
-
-    // Check if it's an HTTP error with a status code
     if (error.response) {
-      // You can send back the exact error message and status code from the HTTP error
-      // This way, the client can understand what exactly went wrong
       return res
         .status(error.response.status)
         .json({ error: error.message, details: error.response.data });
     }
 
-    // If it's a generic error, you can send a 500 "Internal Server Error" status
     return res
       .status(500)
       .json({ error: `Internal Server Error: ${error.message}` });

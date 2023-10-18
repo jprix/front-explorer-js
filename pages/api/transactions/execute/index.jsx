@@ -35,7 +35,6 @@ export default async function handler(req, res) {
     );
     if (!tradeExecution.ok) {
       const errorText = await tradeExecution.text();
-      console.log('tradeExecution not OK', errorText);
       throw new Error(`Failed to executte trade: ${errorText}`);
     }
     const response = await tradeExecution.json();
