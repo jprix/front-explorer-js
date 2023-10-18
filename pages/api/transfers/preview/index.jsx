@@ -1,6 +1,5 @@
+import { FrontApi } from '@front-finance/api';
 export default async function handler(req, res) {
-  console.log('*** hit preview ', req.method, req.body); // log the request method and body
-
   const { PROD_API_KEY, MESH_API_URL, CLIENT_ID } = process.env;
 
   const payload = req.body;
@@ -9,28 +8,24 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const api = new FrontApi({
+    baseURL: MESH_API_URL,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Client-Id': CLIENT_ID,
+      'X-Client-Secret': PROD_API_KEY,
+    },
+  });
+
   try {
-    const executePreview = await fetch(
-      `${MESH_API_URL}/api/v1/transfers/managed/preview`,
-      {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Client-Id': CLIENT_ID,
-          'X-Client-Secret': PROD_API_KEY,
-        },
-      }
-    );
-    if (!executePreview.ok) {
-      const responseBody = await executePreview.json();
-      console.error('Error response from Mesh API:', responseBody);
-      const errorMessage = `Failed to execute transfer preview. Status: ${executePreview.status} - ${executePreview.statusText}. Message: ${responseBody.message}`;
+    const executePreview =
+      await api.managedTransfers.v1TransfersManagedPreviewCreate(payload);
+
+    if (executePreview.status !== 200) {
+      const errorMessage = `Failed to execute transfer preview. Status: ${executePreview.status} - ${executePreview.statusText}. Message: ${executePreview.message}`;
       return res.status(500).json({ error: errorMessage });
-      //throw new Error(`Failed to Preview transfer: ${errorMessage}`);
     }
-    const response = await executePreview.json();
-    return res.status(200).json(response);
+    return res.status(200).json(executePreview.data);
   } catch (error) {
     console.log('this was the error from Mesh', error);
     res.status(500).json({ error: `Something went wrong: ${error.message}` });
