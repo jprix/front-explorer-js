@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Link from 'next/link';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -111,11 +110,7 @@ function renderTable(rows, headers, page, setPage) {
                 }}
               >
                 <TableCell>{network.type}</TableCell>
-                <TableCell>
-                  <Link href={`/request/${network.id}`} passHref>
-                    {network.id}
-                  </Link>
-                </TableCell>
+                <TableCell>{network.id}</TableCell>
                 <TableCell>{network.name}</TableCell>
                 <TableCell>{network.id}</TableCell>
                 <TableCell>{network.chainId}</TableCell>
