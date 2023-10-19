@@ -103,7 +103,6 @@ const ConfigurePreviewForm = ({
               }
             />
           </FormControl>
-          <p>{errorMessage}</p>
         </form>
       </CardContent>
     </Card>

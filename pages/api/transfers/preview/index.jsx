@@ -22,12 +22,20 @@ export default async function handler(req, res) {
       await api.managedTransfers.v1TransfersManagedPreviewCreate(payload);
 
     if (executePreview.status !== 200) {
-      const errorMessage = `Failed to execute transfer preview. Status: ${executePreview.status} - ${executePreview.statusText}. Message: ${executePreview.message}`;
-      return res.status(500).json({ error: errorMessage });
+      throw new Error(
+        `Failed to get Deposit Address: ${executePreview.statusText}`
+      );
     }
     return res.status(200).json(executePreview.data);
   } catch (error) {
-    console.log('this was the error from Mesh', error);
-    res.status(500).json({ error: `Something went wrong: ${error.message}` });
+    if (error.response) {
+      return res
+        .status(error.response.status)
+        .json({ error: error.message, details: error.response.data });
+    }
+
+    return res
+      .status(500)
+      .json({ error: `Internal Server Error: ${error.message}` });
   }
 }

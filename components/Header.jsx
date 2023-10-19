@@ -5,13 +5,19 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Button, FormControl, MenuItem, Select } from '@mui/material';
-import { styled } from '@mui/system';
+import { useRouter } from 'next/router';
 
 const Header = ({ setLinkAnother, connectAnotherAccount, authData }) => {
+  const router = useRouter();
   const [dropdownValue, setDropdownValue] = useState('default');
 
   const handleDropdownChange = (event) => {
     setDropdownValue(event.target.value);
+  };
+
+  const handleDisconnectProviders = () => {
+    localStorage.removeItem('authData');
+    router.reload();
   };
 
   return (
@@ -20,7 +26,7 @@ const Header = ({ setLinkAnother, connectAnotherAccount, authData }) => {
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          padding: '0', // Remove padding from the Toolbar
+          padding: '0',
         }}
       >
         <Link href="/">
@@ -52,7 +58,8 @@ const Header = ({ setLinkAnother, connectAnotherAccount, authData }) => {
             <MenuItem value="transfers-page">
               <Link href="/transfers">Transfers</Link>
             </MenuItem>
-            {connectAnotherAccount ? (
+
+            {connectAnotherAccount && authData.length ? (
               <MenuItem>
                 <Button
                   variant="contained"
@@ -65,7 +72,21 @@ const Header = ({ setLinkAnother, connectAnotherAccount, authData }) => {
                 </Button>
               </MenuItem>
             ) : null}
-            <MenuItem></MenuItem>
+            {authData.length ? (
+              <MenuItem
+                sx={{ justifyContent: 'center' }} // centers content inside the MenuItem
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ padding: '4px 8px' }} // added padding here
+                  fullWidth
+                  onClick={handleDisconnectProviders}
+                >
+                  Disconnect Providers
+                </Button>
+              </MenuItem>
+            ) : null}
           </Select>
         </FormControl>
       </Toolbar>
@@ -73,4 +94,9 @@ const Header = ({ setLinkAnother, connectAnotherAccount, authData }) => {
   );
 };
 
+Header.propTypes = {
+  setLinkAnother: PropTypes?.func,
+  connectAnotherAccount: PropTypes?.bool,
+  authData: PropTypes?.array,
+};
 export default Header;

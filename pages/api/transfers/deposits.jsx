@@ -23,15 +23,20 @@ export default async function handler(req, res) {
       await api.transfers.v1TransfersAddressGetCreate(payload);
 
     if (depositAddress.status !== 200) {
-      console.error('Error from Mesh:', depositAddress);
-      const errorMessage = `Failed to retrieve or generate a deposit address. Status: ${depositAddress.status} - ${depositAddress.statusText}. Message: ${depositAddress.message}`;
-      return res.status(500).json({ error: errorMessage });
+      throw new Error(
+        `Failed to get Deposit Address: ${depositAddress.statusText}`
+      );
     }
     return res.status(200).json(depositAddress.data);
   } catch (error) {
-    console.error('Error from Mesh:', error);
-    res
+    if (error.response) {
+      return res
+        .status(error.response.status)
+        .json({ error: error.message, details: error.response.data });
+    }
+
+    return res
       .status(500)
-      .json({ error: `An internal server error occurred: ${error.message}` });
+      .json({ error: `Internal Server Error: ${error.message}` });
   }
 }

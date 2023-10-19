@@ -214,10 +214,10 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
   const [toAuthData, setToAuthData] = useState(null);
   const [transferDetails, setTransferDetails] = useState({});
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMesage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [showMFAForm, setShowMFAForm] = useState(false);
   const [mfaCode, setMfaCode] = useState('');
-  const [validAddress, setValidAddress] = useState(false);
+  const [validAddress, setValidAddress] = useState(true);
   const [symbol, setSymbol] = useState('ETH');
   const [chain, setChain] = useState('');
   const [type, setType] = useState(
@@ -285,7 +285,9 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
       const response = await generateAddress.json();
 
       if (!generateAddress.ok) {
-        setErrorMesage(response.error);
+        setErrorMessage(response.details.message);
+        alert(errorMessage);
+
         throw new Error(
           `Failed to Generate Address: ${generateAddress.statusText}`
         );
@@ -319,7 +321,8 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
       const response = await executePreview.json();
 
       if (!executePreview.ok) {
-        setErrorMesage(response.content.errorMessage);
+        setErrorMessage(response.details.message);
+        alert(errorMessage);
         throw new Error(
           `Failed to Execute Preview Address: ${executePreview.statusText}`
         );
@@ -357,8 +360,7 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
       const response = await executeTransfer.json();
 
       if (!response.ok) {
-        console.log('executeTransfer not OK', response.error);
-        setErrorMesage(response.content.errorMessage);
+        setErrorMessage(response.content.errorMessage);
       }
 
       if (response.content.status === 'mfaRequired') {
@@ -451,7 +453,7 @@ const TransferModal = ({ open, onClose, brokerAuthData, existingAuthData }) => {
             mfaRequired={showMFAForm}
           />
         )}
-        {!validAddress ? <p> Please enter a valid address</p> : null}
+        {!validAddress && <p> Please enter a valid address</p>}
       </DialogContent>
     </Dialog>
   );

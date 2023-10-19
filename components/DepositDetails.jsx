@@ -36,8 +36,7 @@ const GetDepositDetails = ({
   }, [toAuthData]);
 
   useEffect(() => {
-    const getSupportedTokensByType = (type) => {
-      console.log('type', type, 'fetching supported tokens');
+    const getSupportedTokensByType = () => {
       const matchingIntegrations = networks.filter(
         (integration) => integration.type === 'robinhood'
       );
@@ -49,7 +48,6 @@ const GetDepositDetails = ({
         });
       });
       const uniqueSupportedTokens = Array.from(new Set(result));
-      console.log('uniqueSupportedTokens', uniqueSupportedTokens);
       setSupportedTokens(uniqueSupportedTokens);
     };
 
@@ -142,7 +140,6 @@ const GetDepositDetails = ({
                 </Select>
               </FormControl>
             ) : null}
-            {errorMessage !== '' ? <p> Preview Error: {errorMessage}</p> : ''}
             <Grid container justifyContent="flex-end" mt={2}></Grid>
           </form>
         </CardContent>
