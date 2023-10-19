@@ -47,7 +47,6 @@ const ExecuteTransfer = ({
               label="Preview ID"
               value={transferDetails?.content.previewResult?.previewId}
             />
-            {errorMessage !== '' ? <p> Preview Error: {errorMessage}</p> : null}
           </FormControl>
           {mfaRequired ? (
             <FormControl fullWidth sx={{ mb: 2 }}>
@@ -57,9 +56,6 @@ const ExecuteTransfer = ({
                 value={mfaCode}
                 onChange={(e) => setMfaCode(e.target.value)}
               />
-              {errorMessage !== '' ? (
-                <p> Preview Error: {errorMessage}</p>
-              ) : null}
             </FormControl>
           ) : null}
         </form>

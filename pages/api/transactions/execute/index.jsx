@@ -45,10 +45,10 @@ export default async function handler(req, res) {
     }
     return res.status(200).json(tradeExecution.data.content);
   } catch (error) {
-    if (error.message.includes('Failed to execute trade')) {
+    if (error.response) {
       return res
-        .status(502)
-        .json({ error: `Trade execution failed: ${error.message}` });
+        .status(error.response.status)
+        .json({ error: error.message, details: error.response.data });
     }
 
     return res
