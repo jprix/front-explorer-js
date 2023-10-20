@@ -125,7 +125,7 @@ const ChooseProvider = ({
           <Button variant="contained" color="secondary" onClick={handleClick}>
             Connect to Mesh
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             size="small"
             color="tertiary"
@@ -133,7 +133,7 @@ const ChooseProvider = ({
             sx={{ marginLeft: '10px' }}
           >
             Cancel
-          </Button>
+          </Button> */}
           {errorMessage ? <p>{errorMessage}</p> : null}
         </form>
       ) : (

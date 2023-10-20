@@ -72,7 +72,7 @@ const Header = ({ setLinkAnother, connectAnotherAccount, authData }) => {
                 </Button>
               </MenuItem>
             ) : null}
-            {authData.length ? (
+            {authData?.length ? (
               <MenuItem
                 sx={{ justifyContent: 'center' }} // centers content inside the MenuItem
               >
