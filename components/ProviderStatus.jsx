@@ -81,8 +81,7 @@ function StatusDashboard({ page, setPage }) {
                   }}
                 >
                   <TableCell>{status?.type}</TableCell>
-                  <TableCell>{status?.isUp ? 'Up' : 'Down'}</TableCell>
-                  <TableCell>{status?.description || 'N/A'}</TableCell>
+
                   <TableCell>{status?.downTimeStart || 'N/A'}</TableCell>
                   <TableCell>{status?.supportedProducts.join(', ')}</TableCell>
                 </TableRow>
@@ -127,8 +126,7 @@ function StatusDashboard({ page, setPage }) {
           // changed from statuss to status
           'Provider',
           'Status',
-          'Description',
-          'Downtime Start',
+
           'Supported Products',
         ])
       )}
