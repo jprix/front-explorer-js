@@ -17,14 +17,14 @@ const ChooseProvider = ({
   setOpenMeshModal,
   setBrokerType,
 }) => {
-  const [networks, setNetworks] = useState([]);
+  const [integrations, setIntegrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [providerType, setProviderType] = useState('CEX');
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
-        const response = await fetch(`/api/networks`);
+        const response = await fetch(`/api/integrations`);
 
         if (!response.ok) {
           throw new Error(data.error || 'Something went wrong');
@@ -35,7 +35,7 @@ const ChooseProvider = ({
         if (response && response.length === 0) {
           setErrorMessage('No records found.');
         } else {
-          setNetworks(data.content.integrations);
+          setIntegrations(data.content.integrations);
         }
       } catch (error) {
         setErrorMessage('Error fetching data. ', error.message);
@@ -72,7 +72,7 @@ const ChooseProvider = ({
     <div>
       <h1>Connect to your Provider</h1>
 
-      {!loading && networks.length ? (
+      {!loading && integrations.length ? (
         <form>
           <FormControl fullWidth variant="outlined" margin="normal">
             <Box pb={2}>
@@ -97,7 +97,7 @@ const ChooseProvider = ({
                   onChange={(e) => handleExchangeType(e.target.value)}
                   style={{ width: '200px' }}
                 >
-                  {networks.map((integration) => (
+                  {integrations.map((integration) => (
                     <MenuItem key={integration.type} value={integration.type}>
                       {integration.type}
                     </MenuItem>
