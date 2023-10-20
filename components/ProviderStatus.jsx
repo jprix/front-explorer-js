@@ -82,7 +82,7 @@ function StatusDashboard({ page, setPage }) {
                 >
                   <TableCell>{status?.type}</TableCell>
 
-                  <TableCell>{status?.downTimeStart || 'N/A'}</TableCell>
+                  <TableCell>{status?.isUp ? 'Up' : 'Down'}</TableCell>
                   <TableCell>{status?.supportedProducts.join(', ')}</TableCell>
                 </TableRow>
               ))}
