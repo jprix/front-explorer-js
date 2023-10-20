@@ -20,7 +20,6 @@ const GetDepositDetails = ({
   chain,
   formValues,
   handleInputChange,
-  errorMessage,
   setType,
   type,
 }) => {

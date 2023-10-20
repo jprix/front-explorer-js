@@ -15,7 +15,6 @@ const ConfigurePreviewForm = ({
   toAuthData,
   depositAddress,
   handleInputChange,
-  errorMessage,
 }) => {
   const theme = useTheme();
 

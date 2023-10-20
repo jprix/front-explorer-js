@@ -17,15 +17,12 @@ export default async function handler(req, res) {
   });
 
   try {
-    const getNetworks =
-      await api.managedTransfers.v1TransfersManagedNetworksList();
+    const getStatus = await api.managedAccountAuthentication.v1StatusList();
 
-    if (getNetworks.status !== 200) {
-      throw new Error(
-        `Failed to fetch Catalog Link: ${getNetworks.statusText}`
-      );
+    if (getStatus.status !== 200) {
+      throw new Error(`Failed to fetch status: ${getStatus.statusText}`);
     }
-    return res.status(200).json(getNetworks.data);
+    return res.status(200).json(getStatus.data);
   } catch (error) {
     console.log('this was the error from Mesh', error);
     res.status(500).json({ error: `Something went wrong: ${error.message}` });

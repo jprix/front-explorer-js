@@ -9,7 +9,7 @@ const NetworksProvider = ({ children }) => {
   const [loadingNetworks, setLoadingNetworks] = useState(false);
   const [message, setMessage] = useState('');
 
-  const getNetworks = async (payload) => {
+  const getNetworks = async () => {
     try {
       setLoadingNetworks(true);
       const response = await fetch('/api/networks');
@@ -25,7 +25,7 @@ const NetworksProvider = ({ children }) => {
         setMessage('No Networks found.');
         setNetworks([]);
       } else {
-        setNetworks(data.content.integrations);
+        setNetworks(data.content.networks);
       }
     } catch (error) {
       setMessage(error);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Grid } from '@mui/material';
 import ProviderDetails from '../components/ProviderDetails';
-import NetworkDashboard from '../components/NetworksDashboard';
+import NetworkDashboard from '../components/Dashboard';
 import MeshModal from '../components/MeshModal';
 import Header from '../components/Header';
 import ChooseProvider from 'components/ChooseProvider';

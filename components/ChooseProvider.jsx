@@ -16,7 +16,6 @@ const ChooseProvider = ({
   brokerType = 'coinbase',
   setOpenMeshModal,
   setBrokerType,
-  setLinkAnother,
 }) => {
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true);

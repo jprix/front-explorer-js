@@ -13,7 +13,6 @@ const ExecuteTransfer = ({
   brokerAuthData,
   transferDetails,
   formValues,
-  errorMessage,
   setMfaCode,
   mfaRequired,
   mfaCode,
