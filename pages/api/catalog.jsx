@@ -31,17 +31,23 @@ export default async function handler(req, res) {
     },
   });
 
+  console.log('bodyObject', bodyObject);
+
   try {
     const getCatalogLink =
       await api.managedAccountAuthentication.v1LinktokenCreate(bodyObject);
 
     if (getCatalogLink.status !== 200) {
       const errorMessage = `Failed to retrieve or generate catalogLink. Status: ${getCatalogLink.status} - ${getCatalogLink.statusText}. Message: ${getCatalogLink.message}`;
-      throw new Error(errorMessage);
+      throw new Error(errorMessage.displayMessage);
     }
-
+    console.log('getCatalogLink', getCatalogLink);
     return res.status(200).json(getCatalogLink.data);
   } catch (error) {
-    res.status(500).json({ error: `Something went wrong: ${error.message}` });
+    console.error('Error response:', error.response);
+
+    res.status(500).json({
+      error: `Something went wrong: ${error.message}`,
+    });
   }
 }

@@ -6,6 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  console.log('payload', payload);
   try {
     const refreshAccount = await fetch(`${MESH_API_URL}/api/v1/token/refresh`, {
       method: 'POST',
@@ -24,6 +25,7 @@ export default async function handler(req, res) {
     }
 
     const response = await refreshAccount.json();
+    console.log('refresh response', response);
     return res.status(200).json(response);
   } catch (error) {
     console.log('Error from Mesh:', error);

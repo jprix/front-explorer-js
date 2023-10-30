@@ -154,10 +154,10 @@ const ProviderDetails = ({ existingAuthData, setExistingAuthData }) => {
   };
 
   const handleRefresh = async (authData) => {
-    console.log('refreshing', authData);
     const payload = {
       type: authData.accessToken.brokerType,
       refreshToken: authData.accessToken.accountTokens[0].refreshToken,
+      createNewRefreshToken: true,
     };
 
     try {

@@ -7,9 +7,7 @@ export const getCatalogLink = async (
   setErrorMessage = () => {},
   payload = null
 ) => {
-  console.log('hit getCatalogLink', brokerType);
   const UserId = getUserId(brokerType);
-  console.log('hit else', brokerType, 'UserId', UserId);
 
   const fetchOptions = {
     method: 'POST',

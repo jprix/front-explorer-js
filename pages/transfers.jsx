@@ -17,7 +17,7 @@ const TransferPage = () => {
   const [openMeshModal, setOpenMeshModal] = useState(false);
   const [existingAuthData, setExistingAuthData] = useState([]);
   const [networks, setNetworks] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(''); // Use to store messages like "No records found" or "Error fetching data"
 
   // State for select fields
@@ -34,7 +34,7 @@ const TransferPage = () => {
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
-        const response = await fetch(`/api/networks`);
+        const response = await fetch(`/api/integrations`);
 
         if (!response.ok) {
           throw new Error(data.error || 'Something went wrong');
@@ -42,13 +42,13 @@ const TransferPage = () => {
 
         const data = await response.json();
 
-        if (response && response.length === 0) {
+        if (data.content.integrations.length === 0) {
           setErrorMessage('No records found.');
         } else {
           setNetworks(data.content.integrations);
         }
       } catch (error) {
-        setErrorMessage('Error fetching data.'); // Set the error message here
+        setErrorMessage('Error fetching data.');
       } finally {
         setLoading(false);
       }
@@ -80,6 +80,7 @@ const TransferPage = () => {
 
   const handleCloseMeshModal = () => {
     setOpenMeshModal(false);
+    setLoading(false);
   };
 
   const handleSuccess = (newAuthData) => {
@@ -98,6 +99,7 @@ const TransferPage = () => {
   };
 
   const handleClick = async () => {
+    setLoading(true);
     await getCatalogLink(
       selectedType,
       setCatalogLink,
@@ -112,7 +114,7 @@ const TransferPage = () => {
       <Header getCatalogLink={getCatalogLink} authData={existingAuthData} />
       <h1>Embedded Deposits</h1>
 
-      {!loading && networks.length ? (
+      {!loading ? (
         <form>
           <FormControl fullWidth variant="outlined" margin="normal">
             <InputLabel>Type</InputLabel>
