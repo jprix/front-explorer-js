@@ -46,7 +46,7 @@ function StatusDashboard({ page, setPage }) {
   }
 
   const renderTable = (rows, headers) => {
-    const rowsPerPage = 10;
+    const rowsPerPage = 20;
 
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
