@@ -18,8 +18,6 @@ function StatusDashboard({ page, setPage }) {
   const [loadingStatus, setLoadingStatus] = useState(false);
 
   useEffect(() => {
-    console.log('Effect run');
-
     const fetchStatus = async () => {
       try {
         setLoadingStatus(true);
@@ -80,7 +78,11 @@ function StatusDashboard({ page, setPage }) {
                       index % 2 ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
                   }}
                 >
-                  <TableCell>{status?.type}</TableCell>
+                  <TableCell>
+                    {status?.deFiWalletData?.name
+                      ? status.deFiWalletData.name
+                      : status.type}
+                  </TableCell>
 
                   <TableCell>{status?.isUp ? 'Up' : 'Down'}</TableCell>
                   <TableCell>{status?.supportedProducts.join(', ')}</TableCell>
